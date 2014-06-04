@@ -78,33 +78,34 @@ namespace SURF
             if (openFD.ShowDialog() == DialogResult.OK)
             {
                 string imgPath = openFD.FileName;
-                filenameLabel.Text = imgPath.ToString();
-                
-
                 this.Cursor = Cursors.WaitCursor;
 
                 try
                 {
-                    //Загружаем изображение
+                    loadInfo.Text = "Загрузка изображения " + imgPath;
                     Bitmap image = new Bitmap(imgPath);
 
                     pictureImage.Image = image;
                     pictureImage.BackColor = Color.White;
 
-                    MessageBox.Show("Исходник");
+                    loadInfo.Text = "Исходное изображение получено";
 
                     bkgrFilter(image, Color.FromArgb(1, 1, 1), 30);
-                    MessageBox.Show("Прозрачный фон");
-                    
-                    //Получим интегральное изображение
+
+                    loadInfo.Text = "Удален фон";
+
+                    loadInfo.Text = "Получение интегрального изображения";
+
                     IntegralImage iImage = IntegralImage.FromImage(image);
-                    
-                    //Получим ключевые точки
+
+                    loadInfo.Text = "Получение ключевых точек";
                     iPoints = FastHessian.getIpoints(0.0002f, 5, 2, iImage);
                     SURFDescriptor.DecribeInterestPoints(iPoints, iImage);
 
-                    //Отобразим результаты работы SURF
+                    loadInfo.Text = "Отображение результатов работы SURF";
                     drawSURF(image, iPoints);
+
+                    loadInfo.Text = "";
   
                 }
                 catch
@@ -112,6 +113,8 @@ namespace SURF
                     MessageBox.Show("Ошибка при обработке изображения", imgPath.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 this.Cursor = Cursors.Arrow;
+
+                pictureImage.Refresh();
             }
         }
 
@@ -138,7 +141,7 @@ namespace SURF
                     try
                     {
                         //Загружаем изображение
-                        filenameLabel.Text = "Загрузка изображения " + imgPath;
+                        loadInfo.Text = "Загрузка изображения " + imgPath;
 
                         //Обрезка и добавление изображения
                         Rectangle rect1 = new Rectangle(237, 105, 1920, 1615);
@@ -150,20 +153,20 @@ namespace SURF
                             //pictureBox.Image = imageN.Last();
 
                             //Получим интегральное изображение
-                            filenameLabel.Text = "Получение интегрального изображения";
+                            loadInfo.Text = "Получение интегрального изображения";
                             intImage = IntegralImage.FromImage(imageN.Last());
 
                             //Найдем ключевые точки
-                            filenameLabel.Text = "Поиск ключевых точек";
+                            loadInfo.Text = "Поиск ключевых точек";
                             iPointsN.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
-                            filenameLabel.Text = "Поиск дескрипторов ключевых точек";
+                            loadInfo.Text = "Поиск дескрипторов ключевых точек";
                             SURFDescriptor.DecribeInterestPoints(iPointsN.Last(), intImage);
 
                             //Отобразим результаты работы SURF
-                            filenameLabel.Text = "Применение результатов для " + imgPath;
+                            loadInfo.Text = "Применение результатов для " + imgPath;
                             drawSURF(imageN.Last(), iPointsN.Last());
 
-                            filenameLabel.Text = "";
+                            loadInfo.Text = "";
                         }
                         else MessageBox.Show("Ошибка при обработке изображения", imgPath.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -345,15 +348,6 @@ namespace SURF
             this.Close();
         }
 
-        /// <summary>
-        /// Открытие изображения в редакторе по умолчанию
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void openDirectory(object sender, EventArgs e)
-        {
-            if(filenameLabel.Text!="") openDir(filenameLabel.Text);
-        }
         
         /// <summary>
         /// Открытие изображения в редакторе по умолчанию
@@ -446,22 +440,23 @@ namespace SURF
         /// <param name="e"></param>
         private void UpdateZoomedImage(object sender, MouseEventArgs e)
         {
-            if (pictureImage.Image != null)
+            if (pictureImage.Image != null && pixelInfo.Visible == true)
             {
 
-                int zoomWidth = pictureZoom.Width;
-                int zoomHeight = pictureZoom.Height;
+                int zoomWidth = 10;
+                int zoomHeight = 10;
 
                 
                 //Вычисляем центр
 
-                int halfWidth = zoomWidth / 2;
-                int halfHeight = zoomHeight / 2;
+                int halfWidth = 5;
+                int halfHeight = 5;
 
 
                 Bitmap tempBitmap = new Bitmap(zoomWidth, zoomHeight,
                                                PixelFormat.Format24bppRgb);
                 Graphics bmGraphics = Graphics.FromImage(tempBitmap);
+
 
                 bmGraphics.Clear(Color.Black);
 
@@ -472,14 +467,11 @@ namespace SURF
                                      new Rectangle(e.X - halfWidth, e.Y - halfHeight,
                                      zoomWidth, zoomHeight), GraphicsUnit.Pixel);
 
-                pictureZoom.Image = tempBitmap;
-
                 //Отобразим информацию о пикселе под курсором
 
-                labelR.Text = "R: " + tempBitmap.GetPixel(halfWidth, halfHeight).R.ToString();
-                labelG.Text = "G: " + tempBitmap.GetPixel(halfWidth, halfHeight).G.ToString();
-                labelB.Text = "B: " + tempBitmap.GetPixel(halfWidth, halfHeight).B.ToString();
-                labelBrightness.Text = "Brightness: " + 
+                pixelInfo.Text = "R: " + tempBitmap.GetPixel(halfWidth, halfHeight).R.ToString() + 
+                            "  G: " + tempBitmap.GetPixel(halfWidth, halfHeight).G.ToString() +
+                            "  B: " + tempBitmap.GetPixel(halfWidth, halfHeight).B.ToString() + "  Brightness: " + 
                     ((tempBitmap.GetPixel(halfWidth, halfHeight).R + tempBitmap.GetPixel(halfWidth, halfHeight).G + tempBitmap.GetPixel(halfWidth, halfHeight).B) / 3).ToString();
 
                 //Рисуем крест на увеличенном изображении
@@ -495,23 +487,48 @@ namespace SURF
 
 
                 bmGraphics.Dispose();
-
-                //Обновляем
-                pictureZoom.Refresh();
             }
         }
-        /*
+
+        /// <summary>
+        /// Подогнать изображение под размеры окна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void picture_fit(object sender, EventArgs e)
         {
-            pictureImage.Width = panel.Width;
-            pictureImage.Height = panel.Height;
+            fitMenuItem.Checked = true;
+            sourceMenuItem.Checked = false;
+            panel1.VerticalScroll.Value = 0;
+            panel1.HorizontalScroll.Value = 0;
+            this.pictureImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureImage.Width = this.panel1.Width;
+            this.pictureImage.Height = this.panel1.Height;
+            pixelInfo.Visible = false;
         }
 
+        /// <summary>
+        /// Исходный размер
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void picture_source(object sender, EventArgs e)
         {
-            pictureImage.Width = pictureImage.Image.Width;
-            pictureImage.Height = pictureImage.Image.Height;
+            fitMenuItem.Checked = false;
+            sourceMenuItem.Checked = true;
+            this.pictureImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            pixelInfo.Visible = true;
         }
-        */
+
+        /// <summary>
+        /// Поправить отображение при изменении размеров окна
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void windowsSizeChanged(object sender, EventArgs e)
+        {
+            this.pictureImage.Width = this.panel1.Width;
+            this.pictureImage.Height = this.panel1.Height;
+        }
     }
 }

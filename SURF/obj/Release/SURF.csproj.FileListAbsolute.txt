@@ -6,3 +6,8 @@ D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.Properties.Resources.resour
 D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.csproj.GenerateResource.Cache
 D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.exe
 D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.MainForm.resources
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.Properties.Resources.resources
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.csproj.GenerateResource.Cache
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.exe
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.pdb

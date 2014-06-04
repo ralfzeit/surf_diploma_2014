@@ -35,22 +35,22 @@
             this.сToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.filenameLabel = new System.Windows.Forms.ToolStripMenuItem();
             this.open_images = new System.Windows.Forms.OpenFileDialog();
             this.save_image = new System.Windows.Forms.SaveFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.pictureZoom = new System.Windows.Forms.PictureBox();
-            this.labelR = new System.Windows.Forms.Label();
-            this.labelG = new System.Windows.Forms.Label();
-            this.labelB = new System.Windows.Forms.Label();
-            this.labelBrightness = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.pictureImage = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.pixelInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            this.loadInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            this.оТОБРАЖЕНИЕToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sourceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureZoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -58,7 +58,7 @@
             this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.фАЙЛToolStripMenuItem,
-            this.filenameLabel});
+            this.оТОБРАЖЕНИЕToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1008, 24);
@@ -105,14 +105,6 @@
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.close_app);
             // 
-            // filenameLabel
-            // 
-            this.filenameLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.filenameLabel.Enabled = false;
-            this.filenameLabel.Name = "filenameLabel";
-            this.filenameLabel.Size = new System.Drawing.Size(12, 20);
-            this.filenameLabel.Click += new System.EventHandler(this.openDirectory);
-            // 
             // open_images
             // 
             this.open_images.Filter = "JPG|*.jpg|BMP|*.bmp|GIF|*.gif";
@@ -141,117 +133,105 @@
             this.button2.Text = "Правый глаз";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // pictureZoom
-            // 
-            this.pictureZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureZoom.Location = new System.Drawing.Point(832, 24);
-            this.pictureZoom.Name = "pictureZoom";
-            this.pictureZoom.Size = new System.Drawing.Size(167, 163);
-            this.pictureZoom.TabIndex = 4;
-            this.pictureZoom.TabStop = false;
-            // 
-            // labelR
-            // 
-            this.labelR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelR.AutoSize = true;
-            this.labelR.Location = new System.Drawing.Point(842, 193);
-            this.labelR.Name = "labelR";
-            this.labelR.Size = new System.Drawing.Size(21, 13);
-            this.labelR.TabIndex = 5;
-            this.labelR.Text = "R: ";
-            // 
-            // labelG
-            // 
-            this.labelG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelG.AutoSize = true;
-            this.labelG.Location = new System.Drawing.Point(842, 209);
-            this.labelG.Name = "labelG";
-            this.labelG.Size = new System.Drawing.Size(21, 13);
-            this.labelG.TabIndex = 6;
-            this.labelG.Text = "G: ";
-            // 
-            // labelB
-            // 
-            this.labelB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelB.AutoSize = true;
-            this.labelB.Location = new System.Drawing.Point(842, 225);
-            this.labelB.Name = "labelB";
-            this.labelB.Size = new System.Drawing.Size(20, 13);
-            this.labelB.TabIndex = 7;
-            this.labelB.Text = "B: ";
-            // 
-            // labelBrightness
-            // 
-            this.labelBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelBrightness.AutoSize = true;
-            this.labelBrightness.Location = new System.Drawing.Point(842, 241);
-            this.labelBrightness.Name = "labelBrightness";
-            this.labelBrightness.Size = new System.Drawing.Size(62, 13);
-            this.labelBrightness.TabIndex = 8;
-            this.labelBrightness.Text = "Brightness: ";
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(826, 535);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(86, 23);
-            this.button3.TabIndex = 10;
-            this.button3.Text = "1:1";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(917, 535);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(86, 23);
-            this.button4.TabIndex = 11;
-            this.button4.Text = "Fit";
-            this.button4.UseVisualStyleBackColor = true;
-            // 
             // pictureImage
             // 
-            this.pictureImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureImage.BackColor = System.Drawing.Color.Black;
+            this.pictureImage.BackColor = System.Drawing.Color.Transparent;
             this.pictureImage.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pictureImage.Location = new System.Drawing.Point(99, 24);
+            this.pictureImage.Location = new System.Drawing.Point(0, 0);
             this.pictureImage.Name = "pictureImage";
-            this.pictureImage.Size = new System.Drawing.Size(724, 536);
+            this.pictureImage.Size = new System.Drawing.Size(724, 512);
             this.pictureImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureImage.TabIndex = 0;
             this.pictureImage.TabStop = false;
             this.pictureImage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.UpdateZoomedImage);
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.pictureImage);
+            this.panel1.Location = new System.Drawing.Point(100, 24);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(724, 512);
+            this.panel1.TabIndex = 12;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pixelInfo,
+            this.loadInfo});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 539);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1008, 22);
+            this.statusStrip1.TabIndex = 13;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // pixelInfo
+            // 
+            this.pixelInfo.AutoSize = false;
+            this.pixelInfo.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.pixelInfo.Name = "pixelInfo";
+            this.pixelInfo.Size = new System.Drawing.Size(230, 17);
+            this.pixelInfo.Visible = false;
+            // 
+            // loadInfo
+            // 
+            this.loadInfo.Name = "loadInfo";
+            this.loadInfo.Size = new System.Drawing.Size(0, 17);
+            // 
+            // оТОБРАЖЕНИЕToolStripMenuItem
+            // 
+            this.оТОБРАЖЕНИЕToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.оТОБРАЖЕНИЕToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fitMenuItem,
+            this.sourceMenuItem});
+            this.оТОБРАЖЕНИЕToolStripMenuItem.Name = "оТОБРАЖЕНИЕToolStripMenuItem";
+            this.оТОБРАЖЕНИЕToolStripMenuItem.Size = new System.Drawing.Size(107, 20);
+            this.оТОБРАЖЕНИЕToolStripMenuItem.Text = "ОТОБРАЖЕНИЕ";
+            // 
+            // sourceMenuItem
+            // 
+            this.sourceMenuItem.Name = "sourceMenuItem";
+            this.sourceMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.sourceMenuItem.Text = "Исходный размер";
+            this.sourceMenuItem.Click += new System.EventHandler(this.picture_source);
+            // 
+            // fitMenuItem
+            // 
+            this.fitMenuItem.Checked = true;
+            this.fitMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fitMenuItem.Name = "fitMenuItem";
+            this.fitMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.fitMenuItem.Text = "Подогнать под размеры окна";
+            this.fitMenuItem.Click += new System.EventHandler(this.picture_fit);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ClientSize = new System.Drawing.Size(1008, 561);
-            this.Controls.Add(this.pictureImage);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.labelBrightness);
-            this.Controls.Add(this.labelB);
-            this.Controls.Add(this.labelG);
-            this.Controls.Add(this.labelR);
-            this.Controls.Add(this.pictureZoom);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(1024, 600);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Поиск ключевых точек методом SURF";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.SizeChanged += new System.EventHandler(this.windowsSizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureZoom)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -264,20 +244,19 @@
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem filenameLabel;
         private System.Windows.Forms.OpenFileDialog open_images;
         private System.Windows.Forms.ToolStripMenuItem сToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog save_image;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.PictureBox pictureZoom;
-        private System.Windows.Forms.Label labelR;
-        private System.Windows.Forms.Label labelG;
-        private System.Windows.Forms.Label labelB;
-        private System.Windows.Forms.Label labelBrightness;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.PictureBox pictureImage;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel pixelInfo;
+        private System.Windows.Forms.ToolStripStatusLabel loadInfo;
+        private System.Windows.Forms.ToolStripMenuItem оТОБРАЖЕНИЕToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sourceMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fitMenuItem;
     }
 }
 
