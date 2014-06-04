@@ -587,6 +587,14 @@ namespace SURF
 
                 pictureZoom.Image = tempBitmap;
 
+                //Отобразим информацию о пикселе под курсором
+
+                labelR.Text = "R: " + tempBitmap.GetPixel(halfWidth, halfHeight).R.ToString();
+                labelG.Text = "G: " + tempBitmap.GetPixel(halfWidth, halfHeight).G.ToString();
+                labelB.Text = "B: " + tempBitmap.GetPixel(halfWidth, halfHeight).B.ToString();
+                labelBrightness.Text = "Brightness: " + 
+                    ((tempBitmap.GetPixel(halfWidth, halfHeight).R + tempBitmap.GetPixel(halfWidth, halfHeight).G + tempBitmap.GetPixel(halfWidth, halfHeight).B) / 3).ToString();
+
                 //Рисуем крест на увеличенном изображении
 
                 bmGraphics.DrawLine(Pens.Black, halfWidth + 1,

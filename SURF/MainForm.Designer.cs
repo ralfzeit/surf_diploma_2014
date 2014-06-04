@@ -42,6 +42,10 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.pictureZoom = new System.Windows.Forms.PictureBox();
+            this.labelR = new System.Windows.Forms.Label();
+            this.labelG = new System.Windows.Forms.Label();
+            this.labelB = new System.Windows.Forms.Label();
+            this.labelBrightness = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureZoom)).BeginInit();
@@ -52,6 +56,7 @@
             this.pictureImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureImage.BackColor = System.Drawing.Color.Black;
             this.pictureImage.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureImage.Location = new System.Drawing.Point(99, 24);
             this.pictureImage.Name = "pictureImage";
@@ -158,12 +163,56 @@
             this.pictureZoom.TabIndex = 4;
             this.pictureZoom.TabStop = false;
             // 
+            // labelR
+            // 
+            this.labelR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelR.AutoSize = true;
+            this.labelR.Location = new System.Drawing.Point(842, 193);
+            this.labelR.Name = "labelR";
+            this.labelR.Size = new System.Drawing.Size(21, 13);
+            this.labelR.TabIndex = 5;
+            this.labelR.Text = "R: ";
+            // 
+            // labelG
+            // 
+            this.labelG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelG.AutoSize = true;
+            this.labelG.Location = new System.Drawing.Point(842, 209);
+            this.labelG.Name = "labelG";
+            this.labelG.Size = new System.Drawing.Size(21, 13);
+            this.labelG.TabIndex = 6;
+            this.labelG.Text = "G: ";
+            // 
+            // labelB
+            // 
+            this.labelB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelB.AutoSize = true;
+            this.labelB.Location = new System.Drawing.Point(842, 225);
+            this.labelB.Name = "labelB";
+            this.labelB.Size = new System.Drawing.Size(20, 13);
+            this.labelB.TabIndex = 7;
+            this.labelB.Text = "B: ";
+            // 
+            // labelBrightness
+            // 
+            this.labelBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelBrightness.AutoSize = true;
+            this.labelBrightness.Location = new System.Drawing.Point(842, 241);
+            this.labelBrightness.Name = "labelBrightness";
+            this.labelBrightness.Size = new System.Drawing.Size(62, 13);
+            this.labelBrightness.TabIndex = 8;
+            this.labelBrightness.Text = "Brightness: ";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ClientSize = new System.Drawing.Size(1008, 561);
+            this.Controls.Add(this.labelBrightness);
+            this.Controls.Add(this.labelB);
+            this.Controls.Add(this.labelG);
+            this.Controls.Add(this.labelR);
             this.Controls.Add(this.pictureZoom);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -199,6 +248,10 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.PictureBox pictureZoom;
+        private System.Windows.Forms.Label labelR;
+        private System.Windows.Forms.Label labelG;
+        private System.Windows.Forms.Label labelB;
+        private System.Windows.Forms.Label labelBrightness;
     }
 }
 
