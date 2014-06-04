@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Drawing.Drawing2D;
 
-
 namespace SURF
 {
     /// <summary>
@@ -315,8 +314,8 @@ namespace SURF
         /// <param name="e"></param>
         private void open_img_click(object sender, EventArgs e)
         {
-            //open_image();
-            images_n_points();
+            open_image();
+            //images_n_points();
         }
 
         /// <summary>
@@ -430,7 +429,7 @@ namespace SURF
                         dist2 = d;
                 }
 
-                if (dist1 < 0.3 * dist2)
+                if (dist1 < 0.2 * dist2)
                 {
                     matched.Add(new InterestPointPair { p1 = ip, p2 = neighbour, dist = dist1 }); //Пары одинаковых ключевых точек из соседних кадров
                 }
@@ -438,6 +437,7 @@ namespace SURF
 
             return matched;
         }
+
 
         /// <summary>
         /// Лупа
@@ -500,6 +500,18 @@ namespace SURF
                 pictureZoom.Refresh();
             }
         }
+        /*
+        private void picture_fit(object sender, EventArgs e)
+        {
+            pictureImage.Width = panel.Width;
+            pictureImage.Height = panel.Height;
+        }
 
+        private void picture_source(object sender, EventArgs e)
+        {
+            pictureImage.Width = pictureImage.Image.Width;
+            pictureImage.Height = pictureImage.Image.Height;
+        }
+        */
     }
 }

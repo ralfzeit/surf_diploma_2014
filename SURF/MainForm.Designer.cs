@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.pictureImage = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.фАЙЛToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,25 +45,13 @@
             this.labelG = new System.Windows.Forms.Label();
             this.labelB = new System.Windows.Forms.Label();
             this.labelBrightness = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.pictureImage = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureZoom)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureImage
-            // 
-            this.pictureImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureImage.BackColor = System.Drawing.Color.Black;
-            this.pictureImage.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pictureImage.Location = new System.Drawing.Point(99, 24);
-            this.pictureImage.Name = "pictureImage";
-            this.pictureImage.Size = new System.Drawing.Size(724, 536);
-            this.pictureImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureImage.TabIndex = 0;
-            this.pictureImage.TabStop = false;
-            this.pictureImage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.UpdateZoomedImage);
             // 
             // menuStrip1
             // 
@@ -203,12 +190,50 @@
             this.labelBrightness.TabIndex = 8;
             this.labelBrightness.Text = "Brightness: ";
             // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(826, 535);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(86, 23);
+            this.button3.TabIndex = 10;
+            this.button3.Text = "1:1";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Location = new System.Drawing.Point(917, 535);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(86, 23);
+            this.button4.TabIndex = 11;
+            this.button4.Text = "Fit";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // pictureImage
+            // 
+            this.pictureImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureImage.BackColor = System.Drawing.Color.Black;
+            this.pictureImage.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.pictureImage.Location = new System.Drawing.Point(99, 24);
+            this.pictureImage.Name = "pictureImage";
+            this.pictureImage.Size = new System.Drawing.Size(724, 536);
+            this.pictureImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureImage.TabIndex = 0;
+            this.pictureImage.TabStop = false;
+            this.pictureImage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.UpdateZoomedImage);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ClientSize = new System.Drawing.Size(1008, 561);
+            this.Controls.Add(this.pictureImage);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.labelBrightness);
             this.Controls.Add(this.labelB);
             this.Controls.Add(this.labelG);
@@ -216,7 +241,6 @@
             this.Controls.Add(this.pictureZoom);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.pictureImage);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -224,10 +248,10 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Поиск ключевых точек методом SURF";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureZoom)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,7 +259,6 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureImage;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem фАЙЛToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
@@ -252,6 +275,9 @@
         private System.Windows.Forms.Label labelG;
         private System.Windows.Forms.Label labelB;
         private System.Windows.Forms.Label labelBrightness;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.PictureBox pictureImage;
     }
 }
 
