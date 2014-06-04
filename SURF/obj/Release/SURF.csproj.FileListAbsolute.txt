@@ -1,0 +1,8 @@
+D:\Visual Studio Projects\SURF\SURF\bin\Release\SURF.exe
+D:\Visual Studio Projects\SURF\SURF\bin\Release\SURF.pdb
+D:\Visual Studio Projects\SURF\SURF\bin\Release\MathNet.Iridium.dll
+D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.Form1.resources
+D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.Properties.Resources.resources
+D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.csproj.GenerateResource.Cache
+D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.exe
+D:\Visual Studio Projects\SURF\SURF\obj\Release\SURF.pdb

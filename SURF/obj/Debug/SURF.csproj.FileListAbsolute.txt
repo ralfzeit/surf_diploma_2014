@@ -1,0 +1,13 @@
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.Properties.Resources.resources
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.csproj.GenerateResource.Cache
+D:\Visual Studio Projects\SURF\SURF\bin\Debug\SURF.exe
+D:\Visual Studio Projects\SURF\SURF\bin\Debug\SURF.pdb
+D:\Visual Studio Projects\SURF\SURF\bin\Debug\MathNet.Iridium.dll
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.exe
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.pdb
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.csprojResolveAssemblyReference.cache
+D:\Visual Studio Projects\SURF\SURF\obj\Debug\SURF.MainForm.resources
+D:\DIPLOMA_2014\git\SURF\obj\Debug\SURF.exe
+D:\DIPLOMA_2014\git\SURF\obj\Debug\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.exe
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.pdb
