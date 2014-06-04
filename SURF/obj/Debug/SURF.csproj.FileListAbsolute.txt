@@ -11,3 +11,10 @@ D:\DIPLOMA_2014\git\SURF\obj\Debug\SURF.exe
 D:\DIPLOMA_2014\git\SURF\obj\Debug\SURF.pdb
 D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.exe
 D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Debug\SURF.exe
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Debug\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Debug\MathNet.Iridium.dll
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.csprojResolveAssemblyReference.cache
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.MainForm.resources
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.Properties.Resources.resources
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Debug\SURF.csproj.GenerateResource.Cache
