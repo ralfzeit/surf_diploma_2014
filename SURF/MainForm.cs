@@ -562,53 +562,32 @@ namespace SURF
             if (pictureImage.Image != null)
             {
 
-                int _ZoomFactor = 1;
+                int zoomWidth = pictureZoom.Width;
+                int zoomHeight = pictureZoom.Height;
 
-                int zoomWidth = pictureZoom.Width / _ZoomFactor;
-                int zoomHeight = pictureZoom.Height / _ZoomFactor;
-
-                // Calculate the horizontal and vertical midpoints for the crosshair
-
-                // cursor and correct centering of the new image
+                
+                //Вычисляем центр
 
                 int halfWidth = zoomWidth / 2;
                 int halfHeight = zoomHeight / 2;
 
-                // Create a new temporary bitmap to fit inside the picZoom picturebox
 
                 Bitmap tempBitmap = new Bitmap(zoomWidth, zoomHeight,
                                                PixelFormat.Format24bppRgb);
-
-                // Create a temporary Graphics object to work on the bitmap
-
                 Graphics bmGraphics = Graphics.FromImage(tempBitmap);
-
-                // Clear the bitmap with the selected backcolor
 
                 bmGraphics.Clear(Color.Black);
 
-                // Set the interpolation mode
-
                 bmGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                // Draw the portion of the main image onto the bitmap
-
-                // The target rectangle is already known now.
-
-                // Here the mouse position of the cursor on the main image is used to
-
-                // cut out a portion of the main image.
 
                 bmGraphics.DrawImage(pictureImage.Image,
                                      new Rectangle(0, 0, zoomWidth, zoomHeight),
                                      new Rectangle(e.X - halfWidth, e.Y - halfHeight,
                                      zoomWidth, zoomHeight), GraphicsUnit.Pixel);
 
-                // Draw the bitmap on the picZoom picturebox
-
                 pictureZoom.Image = tempBitmap;
 
-                // Draw a crosshair on the bitmap to simulate the cursor position
+                //Рисуем крест на увеличенном изображении
 
                 bmGraphics.DrawLine(Pens.Black, halfWidth + 1,
                                     halfHeight - 4, halfWidth + 1, halfHeight - 1);
@@ -619,12 +598,10 @@ namespace SURF
                 bmGraphics.DrawLine(Pens.Black, halfWidth + 6, halfHeight + 1,
                                     halfWidth + 3, halfHeight + 1);
 
-                // Dispose of the Graphics object
 
                 bmGraphics.Dispose();
 
-                // Refresh the picZoom picturebox to reflect the changes
-
+                //Обновляем
                 pictureZoom.Refresh();
             }
         }
