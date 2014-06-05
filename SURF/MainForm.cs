@@ -64,7 +64,7 @@ namespace SURF
 
             Graphics g = Graphics.FromImage(image);
 
-            foreach (InterestPoint iPoint in iPoints)
+            foreach (InterestPoint iPoint in ipts)
             {
                 int S = 2 * Convert.ToInt32(2.5f * iPoint.scale);
                 int R = Convert.ToInt32(S / 2f);
@@ -107,7 +107,6 @@ namespace SURF
         {
             ConcurrentBag<InterestPointPair> matched = new ConcurrentBag<InterestPointPair>();
             Parallel.ForEach(CurIpts, ip =>
-            // foreach(var ip in CurIpts)
             {
                 InterestPoint neighbour = new InterestPoint();
 
@@ -128,7 +127,7 @@ namespace SURF
                         dist2 = d;
                 }
 
-                if (dist1 < 0.2 * dist2)
+                if (dist1 < 0.3 * dist2)
                 {
                     matched.Add(new InterestPointPair { p1 = ip, p2 = neighbour, dist = dist1 }); //Пары одинаковых ключевых точек из соседних кадров
                 }
@@ -142,7 +141,50 @@ namespace SURF
         /// </summary>
         private void leftSURF()
         {
+            //Курсор ожидания
+            this.Cursor = Cursors.WaitCursor;
 
+            //Очистка списка ключевых точек
+            iPoints_left.Clear();
+            eyeImages_left_surfed = eyeImages_left;
+
+            //Интегральное изображение
+            IntegralImage intImage;
+
+            for (Int32 i = 0; i < 7; i++)
+            {
+                try
+                {
+                    //Загружаем изображение
+                    loadInfo.Text = "Обработка изображения " + (i + 1).ToString();
+
+                    if (bkgrFilter(eyeImages_left[i], Color.FromArgb(0, 0, 0), 30))
+                    {
+                        //Получение интегрального изображения
+                        loadInfo.Text = "Получение интегрального изображения снимка " + (i + 1).ToString();
+                        intImage = IntegralImage.FromImage(eyeImages_left[i]);
+
+                        //Поиск ключевых точек
+                        loadInfo.Text = "Поиск ключевых точек снимка " + (i + 1).ToString(); ;
+                        iPoints_left.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
+                        loadInfo.Text = "Поиск дескрипторов ключевых точек снимка " + (i + 1).ToString(); ;
+                        SURFDescriptor.DecribeInterestPoints(iPoints_left.Last(), intImage);
+
+                        //Отобразим результаты работы SURF
+                        loadInfo.Text = "Применение результатов для " + (i + 1).ToString();
+                        drawSURF(eyeImages_left_surfed[i], iPoints_left.Last());
+
+                        loadInfo.Text = "";
+                    }
+                    else MessageBox.Show("Ошибка при обработке изображения " + (i + 1).ToString(), "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch
+                {
+                    MessageBox.Show("Ошибка при обработке изображения " + (i + 1).ToString(), "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            this.Cursor = Cursors.Arrow;
         }
 
         /// <summary>
@@ -194,8 +236,6 @@ namespace SURF
             }
 
             this.Cursor = Cursors.Arrow;
-
-            MessageBox.Show(CreatePairs(iPoints_right[0], iPoints_right[1]).Count.ToString());
         }
 
         #endregion
@@ -342,8 +382,14 @@ namespace SURF
         private void loadLeftImages(object sender, EventArgs e)
         {
             //Диалог открытия файлов
-            if (open_images.ShowDialog() == DialogResult.OK && open_images.FileNames.Count() == 7)
+            if (open_images.ShowDialog() == DialogResult.OK)
             {
+                if (open_images.FileNames.Count() != 7)
+                {
+                    MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 //Очистка списка для хранения снимков
                 eyeImages_left.Clear();
                 leftListBox.Items.Clear();
@@ -374,8 +420,10 @@ namespace SURF
                 //Восстанавливаем курсор
                 this.Cursor = Cursors.Arrow;
                 loadInfo.Text = "";
+
+                //Метод SURF
+                leftSURF();
             }
-            else MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -384,8 +432,14 @@ namespace SURF
         private void loadRightImages(object sender, EventArgs e)
         {
             //Диалог открытия файлов
-            if (open_images.ShowDialog() == DialogResult.OK && open_images.FileNames.Count() == 7)
+            if (open_images.ShowDialog() == DialogResult.OK)
             {
+                if (open_images.FileNames.Count() != 7)
+                {
+                    MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 //Очистка списка для хранения снимков
                 eyeImages_right.Clear();
                 rightListBox.Items.Clear();
@@ -420,7 +474,6 @@ namespace SURF
                 //Метод SURF
                 rightSURF();
             }
-            else MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         
 
@@ -573,7 +626,7 @@ namespace SURF
         /// <param name="e"></param>
         private void viewLeftImage(object sender, EventArgs e)
         {
-            pictureImage.Image = eyeImages_left[leftListBox.SelectedIndex];
+            pictureImage.Image = eyeImages_left_surfed[leftListBox.SelectedIndex];
         }
 
         /// <summary>
