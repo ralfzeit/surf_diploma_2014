@@ -32,6 +32,7 @@ namespace SURF
         List<List<InterestPoint>> iPoints_left = new List<List<InterestPoint>>();   //Ключевые точки
         List<Int32> avg_leftBrightness = new List<Int32>();                         //Средняя яркость снимков
         Int32 avg_Left;                                                             //Средняя яркость комплекта
+        List<Int32> delta_leftBrightness = new List<Int32>();                       //Дельта яркости
 
         //Комплект снимков правого глаза
         List<Bitmap> eyeImages_right = new List<Bitmap>();                          //Исходники
@@ -39,6 +40,7 @@ namespace SURF
         List<List<InterestPoint>> iPoints_right = new List<List<InterestPoint>>();  //Ключевые точки
         List<Int32> avg_rightBrightness = new List<Int32>();                        //Средняя яркость снимков
         Int32 avg_Right;                                                            //Средняя яркость комплекта
+        List<Int32> delta_rightBrightness = new List<Int32>();                      //Дельта яркости
 
 
         //Ключевые точки
@@ -622,7 +624,12 @@ namespace SURF
                 avg_leftBrightness.Add(brig / (eyeImages_left[img].Height * eyeImages_left[img].Width));
             }
 
+            //Вычисление средней яркости левого комплекта
             avg_Left = avg_leftBrightness.Sum() / 7;
+
+            //Вычисление дельт яркости
+            for (Int32 i = 0; i < 7; i++)
+                delta_leftBrightness.Add(avg_leftBrightness[i] - avg_Left);
 
         }
 
@@ -668,7 +675,12 @@ namespace SURF
                 avg_rightBrightness.Add(brig / (eyeImages_right[img].Height * eyeImages_right[img].Width));
             }
 
+            //Вычисление средней яркости правого комплекта
             avg_Right = avg_rightBrightness.Sum() / 7;
+
+            //Вычисление дельт яркости
+            for (Int32 i = 0; i < 7; i++)
+                delta_rightBrightness.Add(avg_rightBrightness[i] - avg_Right);
 
         }
 
