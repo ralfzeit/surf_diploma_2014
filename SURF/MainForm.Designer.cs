@@ -31,8 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.фАЙЛToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.сToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.оТОБРАЖЕНИЕToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,40 +76,22 @@
             // фАЙЛToolStripMenuItem
             // 
             this.фАЙЛToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.открытьToolStripMenuItem,
-            this.сToolStripMenuItem,
             this.toolStripSeparator1,
             this.выходToolStripMenuItem});
             this.фАЙЛToolStripMenuItem.Name = "фАЙЛToolStripMenuItem";
             this.фАЙЛToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.фАЙЛToolStripMenuItem.Text = "ФАЙЛ";
             // 
-            // открытьToolStripMenuItem
-            // 
-            this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-            this.открытьToolStripMenuItem.Text = "Открыть...";
-            this.открытьToolStripMenuItem.Click += new System.EventHandler(this.open_img_click);
-            // 
-            // сToolStripMenuItem
-            // 
-            this.сToolStripMenuItem.Name = "сToolStripMenuItem";
-            this.сToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.сToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
-            this.сToolStripMenuItem.Text = "Сохранить как...";
-            this.сToolStripMenuItem.Click += new System.EventHandler(this.save_image_as);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(199, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
             this.выходToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.close_app);
             // 
@@ -130,14 +110,16 @@
             this.fitMenuItem.Checked = true;
             this.fitMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fitMenuItem.Name = "fitMenuItem";
-            this.fitMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.fitMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
+            this.fitMenuItem.Size = new System.Drawing.Size(276, 22);
             this.fitMenuItem.Text = "Подогнать под размеры окна";
             this.fitMenuItem.Click += new System.EventHandler(this.picture_fit);
             // 
             // sourceMenuItem
             // 
             this.sourceMenuItem.Name = "sourceMenuItem";
-            this.sourceMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.sourceMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
+            this.sourceMenuItem.Size = new System.Drawing.Size(276, 22);
             this.sourceMenuItem.Text = "Исходный размер";
             this.sourceMenuItem.Click += new System.EventHandler(this.picture_source);
             // 
@@ -336,11 +318,9 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem фАЙЛToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem выходToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog open_images;
-        private System.Windows.Forms.ToolStripMenuItem сToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog save_image;
         private System.Windows.Forms.PictureBox pictureImage;
         private System.Windows.Forms.Panel panel1;

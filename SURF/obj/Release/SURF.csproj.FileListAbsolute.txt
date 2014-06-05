@@ -11,3 +11,6 @@ D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.Properties.Resources.res
 D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.csproj.GenerateResource.Cache
 D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.exe
 D:\DIPLOMA_2014\surf_diploma_2014\SURF\obj\Release\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Release\SURF.exe
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Release\SURF.pdb
+D:\DIPLOMA_2014\surf_diploma_2014\SURF\bin\Release\MathNet.Iridium.dll

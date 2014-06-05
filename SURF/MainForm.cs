@@ -30,11 +30,16 @@ namespace SURF
         List<Bitmap> eyeImages_left = new List<Bitmap>();                           //Исходники
         List<Bitmap> eyeImages_left_surfed = new List<Bitmap>();                    //После обработки SURF
         List<List<InterestPoint>> iPoints_left = new List<List<InterestPoint>>();   //Ключевые точки
+        List<Int32> avg_leftBrightness = new List<Int32>();                         //Средняя яркость снимков
+        Int32 avg_Left;                                                             //Средняя яркость комплекта
 
         //Комплект снимков правого глаза
         List<Bitmap> eyeImages_right = new List<Bitmap>();                          //Исходники
         List<Bitmap> eyeImages_right_surfed = new List<Bitmap>();                   //После обработки SURF
         List<List<InterestPoint>> iPoints_right = new List<List<InterestPoint>>();  //Ключевые точки
+        List<Int32> avg_rightBrightness = new List<Int32>();                        //Средняя яркость снимков
+        Int32 avg_Right;                                                            //Средняя яркость комплекта
+
 
         //Ключевые точки
         List<InterestPoint> iPoints = new List<InterestPoint>();
@@ -421,6 +426,9 @@ namespace SURF
                 this.Cursor = Cursors.Arrow;
                 loadInfo.Text = "";
 
+                //Вычисление средних яркостей снимков
+                do_avg_leftBrightness();
+
                 //Метод SURF
                 leftSURF();
             }
@@ -471,22 +479,14 @@ namespace SURF
                 this.Cursor = Cursors.Arrow;
                 loadInfo.Text = "";
 
+                //Вычисление средних яркостей снимков
+                do_avg_rightBrightness();
+
                 //Метод SURF
                 rightSURF();
             }
         }
         
-
-        /// <summary>
-        /// Открыть (Ctrl+O)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void open_img_click(object sender, EventArgs e)
-        {
-            //open_image();
-            images_n_points();
-        }
 
         #endregion
 
@@ -579,6 +579,93 @@ namespace SURF
             pictureImage.Image = img;
 
             MessageBox.Show(xx.ToString() + "  " + yy.ToString());
+        }
+
+        /// <summary>
+        /// Вычисление средней яркости каждого снимка левого глаза
+        /// </summary>
+        private unsafe void do_avg_leftBrightness()
+        {
+            for(Int32 img = 0; img < 7; img++)
+            {
+                Int32 brig = 0;
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_left[img].LockBits(new Rectangle(0, 0, eyeImages_left[img].Width, eyeImages_left[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for(int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            brig += (p[0] + p[1] + p[2]) / 3;
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_left[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_left[img].UnlockBits(bmData);
+                    }
+                    catch {}
+                }
+                avg_leftBrightness.Add(brig / (eyeImages_left[img].Height * eyeImages_left[img].Width));
+            }
+
+        }
+
+
+        /// <summary>
+        /// Вычисление средней яркости каждого снимка правого глаза
+        /// </summary>
+        private unsafe void do_avg_rightBrightness()
+        {
+            for (Int32 img = 0; img < 7; img++)
+            {
+                Int32 brig = 0;
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_right[img].LockBits(new Rectangle(0, 0, eyeImages_right[img].Width, eyeImages_right[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            brig += (p[0] + p[1] + p[2]) / 3;
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_right[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_right[img].UnlockBits(bmData);
+                    }
+                    catch { }
+                }
+                avg_rightBrightness.Add(brig / (eyeImages_right[img].Height * eyeImages_right[img].Width));
+            }
+
         }
 
         /// <summary>
@@ -789,6 +876,17 @@ namespace SURF
                 }
             }
             else MessageBox.Show("Нет изображения", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        /// <summary>
+        /// Открыть (Ctrl+O)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void open_img_click(object sender, EventArgs e)
+        {
+            //open_image();
+            images_n_points();
         }
 
     }
