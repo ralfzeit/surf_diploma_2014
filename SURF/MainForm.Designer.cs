@@ -226,6 +226,7 @@
             this.button_saveLeft.TabIndex = 1;
             this.button_saveLeft.Text = "Сохранить результат";
             this.button_saveLeft.UseVisualStyleBackColor = true;
+            this.button_saveLeft.Click += new System.EventHandler(this.saveLeft);
             // 
             // leftListBox
             // 
@@ -271,6 +272,7 @@
             this.button_saveRight.TabIndex = 3;
             this.button_saveRight.Text = "Сохранить результат";
             this.button_saveRight.UseVisualStyleBackColor = true;
+            this.button_saveRight.Click += new System.EventHandler(this.saveRight);
             // 
             // rightListBox
             // 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace SURF.SURF
 {
@@ -66,7 +67,7 @@ namespace SURF.SURF
         /// <summary>
         /// Получение интегрального изображения из bitmap
         /// </summary>
-        public static IntegralImage FromImage(Bitmap image)
+        public unsafe static IntegralImage FromImage(Bitmap image)
         {
             IntegralImage pic = new IntegralImage(image.Width, image.Height);
 
@@ -89,7 +90,7 @@ namespace SURF.SURF
                     pic[y, x] = rowsum + pic[y - 1, x];
                 }
             }
-
+            
             return pic;
         }
 
