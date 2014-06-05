@@ -431,6 +431,9 @@ namespace SURF
                 //Вычисление средних яркостей снимков
                 do_avg_leftBrightness();
 
+                //Нормализация яркости
+                normalize_leftBrightness();
+
                 //Метод SURF
                 leftSURF();
             }
@@ -483,6 +486,9 @@ namespace SURF
 
                 //Вычисление средних яркостей снимков
                 do_avg_rightBrightness();
+
+                //Нормализация яркости
+                normalize_rightBrightness();
 
                 //Метод SURF
                 rightSURF();
@@ -581,6 +587,136 @@ namespace SURF
             pictureImage.Image = img;
 
             MessageBox.Show(xx.ToString() + "  " + yy.ToString());
+        }
+
+        /// <summary>
+        /// Нормализация яркости снимков левого глаза
+        /// </summary>
+        private unsafe void normalize_leftBrightness()
+        {
+            for (Int32 img = 0; img < 7; img++)
+            {
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_left[img].LockBits(new Rectangle(0, 0, eyeImages_left[img].Width, eyeImages_left[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            int r = p[0], g = p[1], b = p[2];
+
+                            if (delta_leftBrightness[img] >= 0)
+                            {
+                                r -= (byte)delta_leftBrightness[img];
+                                g -= (byte)delta_leftBrightness[img];
+                                b -= (byte)delta_leftBrightness[img];
+                            }
+                            else
+                            {
+                                r += (byte)(delta_leftBrightness[img] * (-1));
+                                g += (byte)(delta_leftBrightness[img] * (-1));
+                                b += (byte)(delta_leftBrightness[img] * (-1));
+                            }
+
+                            if (r < 0)   r = 0;
+                            if (r > 255) r = 255;
+                            if (g < 0)   g = 0;
+                            if (g > 255) g = 255;
+                            if (b < 0)   b = 0;
+                            if (b > 255) b = 255;
+
+                            p[0] = (byte)r;
+                            p[1] = (byte)g;
+                            p[2] = (byte)b;
+
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_left[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_left[img].UnlockBits(bmData);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Нормализация яркости снимков правого глаза
+        /// </summary>
+        private unsafe void normalize_rightBrightness()
+        {
+            for (Int32 img = 0; img < 7; img++)
+            {
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_right[img].LockBits(new Rectangle(0, 0, eyeImages_right[img].Width, eyeImages_right[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            int r = p[0], g = p[1], b = p[2];
+
+                            if (delta_leftBrightness[img] >= 0)
+                            {
+                                r -= (byte)delta_leftBrightness[img];
+                                g -= (byte)delta_leftBrightness[img];
+                                b -= (byte)delta_leftBrightness[img];
+                            }
+                            else
+                            {
+                                r += (byte)(delta_leftBrightness[img] * (-1));
+                                g += (byte)(delta_leftBrightness[img] * (-1));
+                                b += (byte)(delta_leftBrightness[img] * (-1));
+                            }
+
+                            if (r < 0) r = 0;
+                            if (r > 255) r = 255;
+                            if (g < 0) g = 0;
+                            if (g > 255) g = 255;
+                            if (b < 0) b = 0;
+                            if (b > 255) b = 255;
+
+                            p[0] = (byte)r;
+                            p[1] = (byte)g;
+                            p[2] = (byte)b;
+
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_right[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_right[img].UnlockBits(bmData);
+                    }
+                    catch { }
+                }
+            }
         }
 
         /// <summary>
