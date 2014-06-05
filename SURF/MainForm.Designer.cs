@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.фАЙЛToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +54,6 @@
             this.button_openRight = new System.Windows.Forms.Button();
             this.button_saveRight = new System.Windows.Forms.Button();
             this.rightListBox = new System.Windows.Forms.ListBox();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.panel1.SuspendLayout();
@@ -319,7 +317,6 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Поиск ключевых точек методом SURF";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.SizeChanged += new System.EventHandler(this.windowsSizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -362,7 +359,6 @@
         private System.Windows.Forms.ListBox rightListBox;
         private System.Windows.Forms.Button button_openRight;
         private System.Windows.Forms.Button button_saveRight;
-        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 
