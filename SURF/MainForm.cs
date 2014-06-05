@@ -622,6 +622,8 @@ namespace SURF
                 avg_leftBrightness.Add(brig / (eyeImages_left[img].Height * eyeImages_left[img].Width));
             }
 
+            avg_Left = avg_leftBrightness.Sum() / 7;
+
         }
 
 
@@ -665,6 +667,8 @@ namespace SURF
                 }
                 avg_rightBrightness.Add(brig / (eyeImages_right[img].Height * eyeImages_right[img].Width));
             }
+
+            avg_Right = avg_rightBrightness.Sum() / 7;
 
         }
 
