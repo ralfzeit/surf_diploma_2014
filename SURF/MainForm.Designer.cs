@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.фАЙЛToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,13 +48,14 @@
             this.loadInfo = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.leftTab = new System.Windows.Forms.TabPage();
-            this.rightTab = new System.Windows.Forms.TabPage();
-            this.leftListBox = new System.Windows.Forms.ListBox();
-            this.button_saveLeft = new System.Windows.Forms.Button();
             this.button_openLeft = new System.Windows.Forms.Button();
-            this.rightListBox = new System.Windows.Forms.ListBox();
+            this.button_saveLeft = new System.Windows.Forms.Button();
+            this.leftListBox = new System.Windows.Forms.ListBox();
+            this.rightTab = new System.Windows.Forms.TabPage();
             this.button_openRight = new System.Windows.Forms.Button();
             this.button_saveRight = new System.Windows.Forms.Button();
+            this.rightListBox = new System.Windows.Forms.ListBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.panel1.SuspendLayout();
@@ -224,6 +226,38 @@
             this.leftTab.Text = "Левый глаз";
             this.leftTab.UseVisualStyleBackColor = true;
             // 
+            // button_openLeft
+            // 
+            this.button_openLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_openLeft.Location = new System.Drawing.Point(6, 425);
+            this.button_openLeft.Name = "button_openLeft";
+            this.button_openLeft.Size = new System.Drawing.Size(205, 23);
+            this.button_openLeft.TabIndex = 2;
+            this.button_openLeft.Text = "Загрузить комплект";
+            this.button_openLeft.UseVisualStyleBackColor = true;
+            this.button_openLeft.Click += new System.EventHandler(this.loadLeftImages);
+            // 
+            // button_saveLeft
+            // 
+            this.button_saveLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveLeft.Location = new System.Drawing.Point(6, 454);
+            this.button_saveLeft.Name = "button_saveLeft";
+            this.button_saveLeft.Size = new System.Drawing.Size(205, 23);
+            this.button_saveLeft.TabIndex = 1;
+            this.button_saveLeft.Text = "Сохранить результат";
+            this.button_saveLeft.UseVisualStyleBackColor = true;
+            // 
+            // leftListBox
+            // 
+            this.leftListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.leftListBox.FormattingEnabled = true;
+            this.leftListBox.Location = new System.Drawing.Point(3, 3);
+            this.leftListBox.Name = "leftListBox";
+            this.leftListBox.Size = new System.Drawing.Size(211, 342);
+            this.leftListBox.TabIndex = 0;
+            this.leftListBox.SelectedIndexChanged += new System.EventHandler(this.viewLeftImage);
+            // 
             // rightTab
             // 
             this.rightTab.Controls.Add(this.button_openRight);
@@ -237,46 +271,6 @@
             this.rightTab.Text = "Правый глаз";
             this.rightTab.UseVisualStyleBackColor = true;
             // 
-            // leftListBox
-            // 
-            this.leftListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.leftListBox.FormattingEnabled = true;
-            this.leftListBox.Location = new System.Drawing.Point(3, 3);
-            this.leftListBox.Name = "leftListBox";
-            this.leftListBox.Size = new System.Drawing.Size(211, 355);
-            this.leftListBox.TabIndex = 0;
-            // 
-            // button_saveLeft
-            // 
-            this.button_saveLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_saveLeft.Location = new System.Drawing.Point(6, 454);
-            this.button_saveLeft.Name = "button_saveLeft";
-            this.button_saveLeft.Size = new System.Drawing.Size(205, 23);
-            this.button_saveLeft.TabIndex = 1;
-            this.button_saveLeft.Text = "Сохранить результат";
-            this.button_saveLeft.UseVisualStyleBackColor = true;
-            // 
-            // button_openLeft
-            // 
-            this.button_openLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_openLeft.Location = new System.Drawing.Point(6, 425);
-            this.button_openLeft.Name = "button_openLeft";
-            this.button_openLeft.Size = new System.Drawing.Size(205, 23);
-            this.button_openLeft.TabIndex = 2;
-            this.button_openLeft.Text = "Загрузить комплект";
-            this.button_openLeft.UseVisualStyleBackColor = true;
-            // 
-            // rightListBox
-            // 
-            this.rightListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.rightListBox.FormattingEnabled = true;
-            this.rightListBox.Location = new System.Drawing.Point(3, 3);
-            this.rightListBox.Name = "rightListBox";
-            this.rightListBox.Size = new System.Drawing.Size(211, 355);
-            this.rightListBox.TabIndex = 1;
-            // 
             // button_openRight
             // 
             this.button_openRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -286,6 +280,7 @@
             this.button_openRight.TabIndex = 4;
             this.button_openRight.Text = "Загрузить комплект";
             this.button_openRight.UseVisualStyleBackColor = true;
+            this.button_openRight.Click += new System.EventHandler(this.loadRightImages);
             // 
             // button_saveRight
             // 
@@ -296,6 +291,17 @@
             this.button_saveRight.TabIndex = 3;
             this.button_saveRight.Text = "Сохранить результат";
             this.button_saveRight.UseVisualStyleBackColor = true;
+            // 
+            // rightListBox
+            // 
+            this.rightListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.rightListBox.FormattingEnabled = true;
+            this.rightListBox.Location = new System.Drawing.Point(3, 3);
+            this.rightListBox.Name = "rightListBox";
+            this.rightListBox.Size = new System.Drawing.Size(211, 355);
+            this.rightListBox.TabIndex = 1;
+            this.rightListBox.SelectedIndexChanged += new System.EventHandler(this.viewRightImage);
             // 
             // MainForm
             // 
@@ -356,6 +362,7 @@
         private System.Windows.Forms.ListBox rightListBox;
         private System.Windows.Forms.Button button_openRight;
         private System.Windows.Forms.Button button_saveRight;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

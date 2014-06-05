@@ -24,7 +24,7 @@ namespace SURF
         #region Описание используемых данных
 
         //Координаты вырезаемой области снимков
-        Rectangle rec = new Rectangle(238, 105, 1675, 1320);
+        Rectangle rect = new Rectangle(237, 105, 1920, 1615);
 
         //Комплект снимков левого глаза
         List<Bitmap> eyeImages_left = new List<Bitmap>();           //Исходники
@@ -215,8 +215,7 @@ namespace SURF
                         loadInfo.Text = "Загрузка изображения " + imgPath;
 
                         //Обрезка и добавление изображения
-                        Rectangle rect1 = new Rectangle(237, 105, 1920, 1615);
-                        imageN.Add(CropImg(new Bitmap(imgPath), rect1));
+                        imageN.Add(CropImg(new Bitmap(imgPath), rect));
 
                         if (bkgrFilter(imageN.Last(), Color.FromArgb(0, 0, 0), 30))
                         {
@@ -273,6 +272,91 @@ namespace SURF
                 this.Cursor = Cursors.Arrow;
             }
         }
+
+        /// <summary>
+        /// Загрузка комплекта снимков левого глаза
+        /// </summary>
+        private void loadLeftImages(object sender, EventArgs e)
+        {
+            //Диалог открытия файлов
+            if (open_images.ShowDialog() == DialogResult.OK && open_images.FileNames.Count() == 7)
+            {
+                //Очистка списка для хранения снимков
+                eyeImages_left.Clear();
+                leftListBox.Items.Clear();
+
+                //Курсор ожидания
+                this.Cursor = Cursors.WaitCursor;
+
+                for (Int32 i = 0; i < 7; i++)
+                {
+                    string imgPath = open_images.FileNames[i];
+                    try
+                    {
+                        //Загружаем изображение
+                        loadInfo.Text = "Загрузка изображения " + imgPath;
+
+                        //Обрезка и добавление изображения в список
+                        eyeImages_left.Add(CropImg(new Bitmap(imgPath), rect));
+
+                        if(imgPath.Length > 20) leftListBox.Items.Add("Снимок " + (i + 1).ToString() + "  (..." + imgPath.Substring(imgPath.Length - 20) + ")");
+                        else leftListBox.Items.Add("Снимок " + (i + 1).ToString() + "  (" + imgPath + ")");
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Ошибка при загрузке изображения " + imgPath.ToString(), "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                //Восстанавливаем курсор
+                this.Cursor = Cursors.Arrow;
+                loadInfo.Text = "";
+            }
+            else MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// Загрузка комплекта снимков правого глаза
+        /// </summary>
+        private void loadRightImages(object sender, EventArgs e)
+        {
+            //Диалог открытия файлов
+            if (open_images.ShowDialog() == DialogResult.OK && open_images.FileNames.Count() == 7)
+            {
+                //Очистка списка для хранения снимков
+                eyeImages_right.Clear();
+                rightListBox.Items.Clear();
+
+                //Курсор ожидания
+                this.Cursor = Cursors.WaitCursor;
+
+                for (Int32 i = 0; i < 7; i++)
+                {
+                    string imgPath = open_images.FileNames[i];
+                    try
+                    {
+                        //Загружаем изображение
+                        loadInfo.Text = "Загрузка изображения " + imgPath;
+
+                        //Обрезка и добавление изображения в список
+                        eyeImages_right.Add(CropImg(new Bitmap(imgPath), rect));
+
+                        if (imgPath.Length > 20) rightListBox.Items.Add("Снимок " + (i + 1).ToString() + "  (..." + imgPath.Substring(imgPath.Length - 20) + ")");
+                        else rightListBox.Items.Add("Снимок " + (i + 1).ToString() + "  (" + imgPath + ")");
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Ошибка при загрузке изображения " + imgPath.ToString(), "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                //Восстанавливаем курсор
+                this.Cursor = Cursors.Arrow;
+                loadInfo.Text = "";
+            }
+            else MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        
 
         /// <summary>
         /// Открыть (Ctrl+O)
@@ -399,6 +483,42 @@ namespace SURF
         #endregion
 
         #region Методы для управления отображением изображения
+
+        /// <summary>
+        /// Отображение изображений в listBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void leftListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            int pos = e.Index;
+            e.DrawBackground();
+            e.Graphics.DrawImage((Image)leftListBox.Items[pos], new Point(5, e.Bounds.Top + 5));
+            e.Graphics.DrawString(string.Format("Item #{0}", pos), new Font("Arial", 32.0f,
+                FontStyle.Bold | FontStyle.Italic), Brushes.DarkOliveGreen, new Point(125, e.Bounds.Top + 5));
+            e.DrawFocusRectangle();
+        }
+
+
+        /// <summary>
+        /// Отобразить выбранное изображение левого глаза
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void viewLeftImage(object sender, EventArgs e)
+        {
+            pictureImage.Image = eyeImages_left[leftListBox.SelectedIndex];
+        }
+
+        /// <summary>
+        /// Отобразить выбранное изображение правого глаза
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void viewRightImage(object sender, EventArgs e)
+        {
+            pictureImage.Image = eyeImages_right[rightListBox.SelectedIndex];
+        }
 
         /// <summary>
         /// Лупа
