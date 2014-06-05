@@ -85,9 +85,7 @@ namespace SURF.SURF
                 for (int x = 0; x < image.Width; x++)
                 {
                     Color c = image.GetPixel(x, y);
-                    rowsum += (cR * c.R + cG * c.G + cB * c.B) / 255f;
-
-                    // integral image is rowsum + value above        
+                    rowsum += (cR * c.R + cG * c.G + cB * c.B) / 255f;   
                     pic[y, x] = rowsum + pic[y - 1, x];
                 }
             }
