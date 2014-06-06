@@ -52,6 +52,7 @@
             this.button_openRight = new System.Windows.Forms.Button();
             this.button_saveRight = new System.Windows.Forms.Button();
             this.rightListBox = new System.Windows.Forms.ListBox();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.panel1.SuspendLayout();
@@ -59,6 +60,7 @@
             this.tabControl1.SuspendLayout();
             this.leftTab.SuspendLayout();
             this.rightTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -85,13 +87,13 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
             // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
             this.выходToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.close_app);
             // 
@@ -195,6 +197,7 @@
             // 
             // leftTab
             // 
+            this.leftTab.Controls.Add(this.trackBar1);
             this.leftTab.Controls.Add(this.button_openLeft);
             this.leftTab.Controls.Add(this.button_saveLeft);
             this.leftTab.Controls.Add(this.leftListBox);
@@ -209,7 +212,7 @@
             // button_openLeft
             // 
             this.button_openLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_openLeft.Location = new System.Drawing.Point(6, 425);
+            this.button_openLeft.Location = new System.Drawing.Point(6, 428);
             this.button_openLeft.Name = "button_openLeft";
             this.button_openLeft.Size = new System.Drawing.Size(205, 23);
             this.button_openLeft.TabIndex = 2;
@@ -285,6 +288,16 @@
             this.rightListBox.TabIndex = 1;
             this.rightListBox.SelectedIndexChanged += new System.EventHandler(this.viewRightImage);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(8, 351);
+            this.trackBar1.Maximum = 30;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(203, 45);
+            this.trackBar1.TabIndex = 4;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBar1.Value = 10;
+            // 
             // MainForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -310,7 +323,9 @@
             this.statusStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.leftTab.ResumeLayout(false);
+            this.leftTab.PerformLayout();
             this.rightTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -341,6 +356,7 @@
         private System.Windows.Forms.ListBox rightListBox;
         private System.Windows.Forms.Button button_openRight;
         private System.Windows.Forms.Button button_saveRight;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 

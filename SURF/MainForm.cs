@@ -329,6 +329,9 @@ namespace SURF
                 //Нормализация яркости
                 normalize_leftBrightness();
 
+                //Установка контраста
+                contrast_left(trackBar1.Value / 10);
+
                 //Метод SURF
                 leftSURF();
 
@@ -556,6 +559,69 @@ namespace SURF
             }
         }
 
+
+        /// <summary>
+        /// Изменение контраста снимков левого глаза
+        /// </summary>
+        /// <param name="k">Коэффициент контраста</param>
+        private unsafe void contrast_left(Double k)
+        {
+            for (Int32 img = 0; img < 7; img++)
+            {
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_left[img].LockBits(new Rectangle(0, 0, eyeImages_left[img].Width, eyeImages_left[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            double r = p[0], g = p[1], b = p[2];
+
+                            r = (((r - avg_leftBrightness[img]) * k) + avg_leftBrightness[img]);
+                            g = (((g - avg_leftBrightness[img]) * k) + avg_leftBrightness[img]);
+                            b = (((b - avg_leftBrightness[img]) * k) + avg_leftBrightness[img]);
+
+
+                            int iR = (int)r;
+                            iR = iR > 255 ? 255 : iR;
+                            iR = iR < 0 ? 0 : iR;
+                            int iG = (int)g;
+                            iG = iG > 255 ? 255 : iG;
+                            iG = iG < 0 ? 0 : iG;
+                            int iB = (int)b;
+                            iB = iB > 255 ? 255 : iB;
+                            iB = iB < 0 ? 0 : iB;
+
+                            p[0] = (byte)iR;
+                            p[1] = (byte)iG;
+                            p[2] = (byte)iB;
+
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_left[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_left[img].UnlockBits(bmData);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        
         /// <summary>
         /// Нормализация яркости снимков правого глаза
         /// </summary>
@@ -644,7 +710,7 @@ namespace SURF
 
                         for (int x = 0; x < w; x++)
                         {
-                            brig += (p[0] + p[1] + p[2]) / 3;
+                            brig += Convert.ToInt32(0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2]);
                             p += 4;
                         }
                     };
@@ -695,7 +761,7 @@ namespace SURF
 
                         for (int x = 0; x < w; x++)
                         {
-                            brig += (p[0] + p[1] + p[2]) / 3;
+                            brig += Convert.ToInt32(0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2]);
                             p += 4;
                         }
                     };
@@ -1108,6 +1174,253 @@ namespace SURF
             });
         }
 
+        private void contrast_Left_clck(object sender, EventArgs e)
+        {
+            contrast_left(trackBar1.Value / 10);
+        }
+
+
+        //Эрозия
+        private unsafe Image erodeIMG(Image input)
+        {
+            Bitmap bmp = (Bitmap)input;
+            Bitmap bmpSrc = (Bitmap)input;
+
+            BitmapData bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                                ImageLockMode.ReadWrite,
+                                PixelFormat.Format1bppIndexed);
+
+            int stride = bmData.Stride;
+            int stride2 = bmData.Stride * 2;
+            IntPtr Scan0 = bmData.Scan0;
+
+            byte* p = (byte*)(void*)Scan0;
+
+            int nOffset = stride - bmp.Width * 3;
+            int nWidth = bmp.Width - 2;
+            int nHeight = bmp.Height - 2;
+
+            var w = bmp.Width;
+            var h = bmp.Height;
+
+            var rp = p;
+            var empty = (byte)0;
+            byte c, cm;
+            int i = 0;
+
+            // Erode every pixel
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x += 3, i++)
+                {
+                    // Middle pixel
+                    cm = p[y * stride + x];
+                    if (cm == empty) { continue; }
+
+                    #region FirstRow
+                    // Row 0
+                    // Left pixel
+                    if (x - 3 > 0 && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x - 3)];
+                        if (c == empty) { continue; }
+                    }
+                    // Middle left pixel
+                    if (x - 2 > 0 && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x - 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 1 > 0 && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x - 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + x];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 1 < w && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x + 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 2 < w && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x + 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 3 < w && y - 2 > 0)
+                    {
+                        c = p[(y - 2) * stride + (x + 3)];
+                        if (c == empty) { continue; }
+                    }
+                    #endregion
+
+                    #region SecondRow
+                    // Row 1
+                    // Left pixel 
+                    if (x - 3 > 0 && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x - 3)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 2 > 0 && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x - 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 1 > 0 && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x - 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + x];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 1 < w && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x + 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 2 < w && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x + 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 3 < w && y - 1 > 0)
+                    {
+                        c = p[(y - 1) * stride + (x + 3)];
+                        if (c == empty) { continue; }
+                    }
+
+                    #endregion
+
+                    #region ThirdRow
+                    // Row 2
+                    if (x - 3 > 0)
+                    {
+                        c = p[y * stride + (x - 3)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 2 > 0)
+                    {
+                        c = p[y * stride + (x - 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 1 > 0)
+                    {
+                        c = p[y * stride + (x - 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 1 < w)
+                    {
+                        c = p[y * stride + (x + 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 2 < w)
+                    {
+                        c = p[y * stride + (x + 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 3 < w)
+                    {
+                        c = p[y * stride + (x + 3)];
+                        if (c == empty) { continue; }
+                    }
+                    #endregion
+
+                    #region FourthRow
+                    // Row 3
+                    if (x - 3 > 0 && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x - 3)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 2 > 0 && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x - 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 1 > 0 && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x - 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + x];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 1 < w && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x + 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 2 < w && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x + 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 3 < w && y + 1 < h)
+                    {
+                        c = p[(y + 1) * stride + (x + 3)];
+                        if (c == empty) { continue; }
+                    }
+                    #endregion
+
+                    #region FifthRow
+                    // Row 4
+                    if (x - 3 > 0 && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x - 3)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 2 > 0 && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x - 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x - 1 > 0 && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x - 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + x];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 1 < w && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x + 1)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 2 < w && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x + 2)];
+                        if (c == empty) { continue; }
+                    }
+                    if (x + 3 < w && y + 2 < h)
+                    {
+                        c = p[(y + 2) * stride + (x + 3)];
+                        if (c == empty) { continue; }
+                    }
+                    #endregion
+
+                    // If all neighboring pixels are processed 
+                    // it's clear that the current pixel is not a boundary pixel.
+                    rp[i] = cm;
+                }
+            }
+
+            bmpSrc.UnlockBits(bmData);
+            return bmpSrc;
+        }
+    
 
 
     }
