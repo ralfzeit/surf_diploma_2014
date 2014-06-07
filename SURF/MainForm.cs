@@ -90,15 +90,16 @@ namespace SURF
         /// <returns>Индекс точки</returns>
         Int32 bestIPoint_idSearch()
         {
-            Int32 bestIPoint = 0;
+            Int32 bestIPoint = -1;
             for (Int32 ip = 0; ip < iPointPairs.Count; ip++)
             {
                 if (((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) > 10) || ((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) < -10))
                 {
                     bestIPoint = ip;
-                    break;
+                    return bestIPoint;
                 }
             }
+            MessageBox.Show("Найти подходящую точку совмещения не удалось");
             return bestIPoint;
         }
 
@@ -151,11 +152,13 @@ namespace SURF
 
             //Очистка списка ключевых точек
             iPoints_left.Clear();
+            for (Int32 i = 0; i < 7; i++)
+                iPoints_left.Add(null);
 
             //Интегральное изображение
             IntegralImage intImage;
 
-            for (Int32 i = 0; i < 7; i++)
+            Parallel.For(0, 7, i =>
             {
                 try
                 {
@@ -170,13 +173,13 @@ namespace SURF
 
                         //Поиск ключевых точек
                         loadInfo.Text = "Поиск ключевых точек снимка " + (i + 1).ToString(); ;
-                        iPoints_left.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
+                        iPoints_left[i] = FastHessian.getIpoints(0.0002f, 5, 2, intImage);
                         loadInfo.Text = "Поиск дескрипторов ключевых точек снимка " + (i + 1).ToString(); ;
-                        SURFDescriptor.DecribeInterestPoints(iPoints_left.Last(), intImage);
+                        SURFDescriptor.DecribeInterestPoints(iPoints_left[i], intImage);
 
                         //Отобразим результаты работы SURF
                         loadInfo.Text = "Применение результатов для " + (i + 1).ToString();
-                        drawSURF(eyeImages_left[i], iPoints_left.Last());
+                        //drawSURF(eyeImages_left[i], iPoints_left[i]);
 
                         loadInfo.Text = "";
                     }
@@ -186,7 +189,7 @@ namespace SURF
                 {
                     MessageBox.Show("Ошибка при обработке изображения " + (i + 1).ToString(), "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
+            });
 
             this.Cursor = Cursors.Arrow;
         }
@@ -201,11 +204,13 @@ namespace SURF
 
             //Очистка списка ключевых точек
             iPoints_right.Clear();
+            for (Int32 i = 0; i < 7; i++)
+                iPoints_right.Add(null);
 
             //Интегральное изображение
-            IntegralImage intImage; 
+            IntegralImage intImage;
 
-            for (Int32 i = 0; i < 7; i++)
+            Parallel.For(0, 7, i =>
             {
                 try
                 {
@@ -220,13 +225,13 @@ namespace SURF
 
                         //Поиск ключевых точек
                         loadInfo.Text = "Поиск ключевых точек снимка " + (i + 1).ToString(); ;
-                        iPoints_right.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
+                        iPoints_right[i] = FastHessian.getIpoints(0.0002f, 5, 2, intImage);
                         loadInfo.Text = "Поиск дескрипторов ключевых точек снимка " + (i + 1).ToString(); ;
-                        SURFDescriptor.DecribeInterestPoints(iPoints_right.Last(), intImage);
+                        SURFDescriptor.DecribeInterestPoints(iPoints_right[i], intImage);
 
                         //Отобразим результаты работы SURF
-                        loadInfo.Text = "Применение результатов для " +(i + 1).ToString();
-                        drawSURF(eyeImages_right[i], iPoints_right.Last());
+                        loadInfo.Text = "Применение результатов для " + (i + 1).ToString();
+                        //drawSURF(eyeImages_right[i], iPoints_right[i]);
 
                         loadInfo.Text = "";
                     }
@@ -234,11 +239,70 @@ namespace SURF
                 }
                 catch
                 {
-                    MessageBox.Show("Ошибка при обработке изображения " + (i+1).ToString(), "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Ошибка при обработке изображения " + (i + 1).ToString(), "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
+            });
 
             this.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Сшивка снимков левого глаза
+        /// </summary>
+        private void leftDRAWING()
+        {
+            List<Int32> x = new List<Int32>(7);
+            List<Int32> y = new List<Int32>(7);
+            Int32 iPoint_number;
+
+            //Double x1 = 850, y1 = 750;
+
+            x.Add(1050); y.Add(1150);
+            x.Add(2000); y.Add(1150);
+            x.Add(2850); y.Add(1150);
+            x.Add(2000); y.Add(400);
+            x.Add(2000); y.Add(1900);
+            x.Add(200); y.Add(400);
+            x.Add(200); y.Add(1900);
+
+
+            iPointPairs = CreatePairs(iPoints_left[0],iPoints_left[1]);
+            iPoint_number = bestIPoint_idSearch();
+
+            if (iPoint_number != -1)
+            {
+                iPointPairs.ElementAt(iPoint_number).p1.x;
+                iPointPairs.ElementAt(iPoint_number).p1.y;
+
+            }
+
+
+            
+            Bitmap img = new Bitmap(5000, 4000);
+
+            Graphics g = Graphics.FromImage(img);
+            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+
+            SolidBrush blck = new SolidBrush(Color.Black);
+
+            Region fill = new Region(rect);
+            g.FillRegion(blck, fill);
+
+            for(Int32 i = x.Count-1; i >= 0; i--)
+                g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
+
+            pictureImage.Image = img;
+
+            eyeImages_left.Add(img);
+            leftListBox.Items.Add("Результат сшивки");
+        }
+
+        /// <summary>
+        /// Сшивка снимков правого глаза
+        /// </summary>
+        private void rightDRAWING()
+        {
+
         }
 
         /// <summary>
@@ -247,13 +311,14 @@ namespace SURF
         /// <returns></returns>
         private bool check_leftDRAW()
         {
-            if (CreatePairs(iPoints_left[0], iPoints_left[1]).Count == 0) return false;
-            if (CreatePairs(iPoints_left[0], iPoints_left[5]).Count == 0) return false;
             if (CreatePairs(iPoints_left[0], iPoints_left[6]).Count == 0) return false;
-            if (CreatePairs(iPoints_left[1], iPoints_left[2]).Count == 0) return false;
-            if (CreatePairs(iPoints_left[1], iPoints_left[3]).Count == 0) return false;
-            if (CreatePairs(iPoints_left[1], iPoints_left[4]).Count == 0) return false;
+            if (CreatePairs(iPoints_left[0], iPoints_left[5]).Count == 0) return false;
+            if (CreatePairs(iPoints_left[0], iPoints_left[1]).Count == 0 && CreatePairs(iPoints_left[1], iPoints_left[2]).Count == 0) return false;
 
+            if (CreatePairs(iPoints_left[3], iPoints_left[0]).Count == 0 && CreatePairs(iPoints_left[3], iPoints_left[1]).Count == 0 && CreatePairs(iPoints_left[3], iPoints_left[2]).Count == 0) return false;
+
+            if (CreatePairs(iPoints_left[4], iPoints_left[0]).Count == 0 && CreatePairs(iPoints_left[4], iPoints_left[1]).Count == 0 && CreatePairs(iPoints_left[4], iPoints_left[2]).Count == 0) return false;
+            
             return true;
         }
 
@@ -263,12 +328,11 @@ namespace SURF
         /// <returns></returns>
         private bool check_rightDRAW()
         {
-            if (CreatePairs(iPoints_right[0], iPoints_right[1]).Count == 0) return false;
-            if (CreatePairs(iPoints_right[0], iPoints_right[5]).Count == 0) return false;
             if (CreatePairs(iPoints_right[0], iPoints_right[6]).Count == 0) return false;
-            if (CreatePairs(iPoints_right[1], iPoints_right[2]).Count == 0) return false;
-            if (CreatePairs(iPoints_right[1], iPoints_right[3]).Count == 0) return false;
-            if (CreatePairs(iPoints_right[1], iPoints_right[4]).Count == 0) return false;
+            if (CreatePairs(iPoints_right[0], iPoints_right[5]).Count == 0) return false;
+            if (CreatePairs(iPoints_right[0], iPoints_right[1]).Count == 0 && CreatePairs(iPoints_right[1], iPoints_right[2]).Count == 0) return false;
+            if (CreatePairs(iPoints_right[3], iPoints_right[0]).Count == 0 && CreatePairs(iPoints_right[3], iPoints_right[1]).Count == 0 && CreatePairs(iPoints_right[3], iPoints_right[2]).Count == 0) return false;
+            if (CreatePairs(iPoints_right[4], iPoints_right[0]).Count == 0 && CreatePairs(iPoints_right[4], iPoints_right[1]).Count == 0 && CreatePairs(iPoints_right[4], iPoints_right[2]).Count == 0) return false;
 
             return true;
         }
@@ -334,6 +398,8 @@ namespace SURF
 
                 //Метод SURF
                 leftSURF();
+
+                leftDRAWING();
 
                 if (check_leftDRAW() == true) MessageBox.Show("Сшивка изображений возможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 else MessageBox.Show("Сшивка изображений невозможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -458,7 +524,7 @@ namespace SURF
         /// <summary>
         /// Сшивка изображения
         /// </summary>
-        private void drawFull(Bitmap image1, Bitmap image2, Int32 i)
+        private void drawFullleft(Bitmap image1, Bitmap image2, Int32 i)
         {
             Double x1 = iPointPairs.ElementAt(i).p1.x;
             Double y1 = iPointPairs.ElementAt(i).p1.y;
@@ -483,15 +549,42 @@ namespace SURF
             g.DrawImage(image2, new Point(Convert.ToInt32(xx), Convert.ToInt32(yy)));
 
 
-            //Brush tBrush = new TextureBrush(img, new Rectangle(0, 0, img.Width, img.Height));
-            //Bitmap image = new Bitmap(img.Width, img.Height);
-
-            // img.MakeTransparent(Color.FromArgb(1,1,1));
-
-
             pictureImage.Image = img;
 
+            eyeImages_left.Add(img);
+            leftListBox.Items.Add("SURFED");
+
             MessageBox.Show(xx.ToString() + "  " + yy.ToString());
+        }
+
+        private void miniSURFleft(Bitmap img)
+        {
+            IntegralImage intImage;
+            try
+            {
+                //Загружаем изображение
+                loadInfo.Text = "Обработка изображения";
+
+                if (bkgrFilter(img, Color.FromArgb(0, 0, 0), 30))
+                {
+                    //Получение интегрального изображения
+                    loadInfo.Text = "Получение интегрального изображения снимка ";
+                    intImage = IntegralImage.FromImage(img);
+
+                    //Поиск ключевых точек
+                    loadInfo.Text = "Поиск ключевых точек снимка";
+                    iPoints_left.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
+                    loadInfo.Text = "Поиск дескрипторов ключевых точек снимка";
+                    SURFDescriptor.DecribeInterestPoints(iPoints_left.Last(), intImage);
+
+                    loadInfo.Text = "";
+                }
+                else MessageBox.Show("Ошибка при обработке изображения " , "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch
+            {
+                MessageBox.Show("Ошибка при обработке изображения " , "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
@@ -622,6 +715,10 @@ namespace SURF
         }
 
         
+        ///!!!!!!!!!!!!!!!!!!
+        ///Здесь должен быть контраст для правого глаза
+        ///!!!!!!!!!!!!!!!!!!
+
         /// <summary>
         /// Нормализация яркости снимков правого глаза
         /// </summary>
@@ -1090,7 +1187,7 @@ namespace SURF
 
                         MessageBox.Show(pairs1, "Пары найденных ключевых точек"); //DEBUG
 
-                        drawFull(imageN[0], imageN[1], bestIPoint_idSearch());
+                        drawFullleft(imageN[0], imageN[1], bestIPoint_idSearch());
                     }
                 }
 
