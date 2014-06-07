@@ -93,13 +93,12 @@ namespace SURF
             Int32 bestIPoint = -1;
             for (Int32 ip = 0; ip < iPointPairs.Count; ip++)
             {
-                if (((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) > 10) || ((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) < -10))
+                if (((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) > 100) || ((iPointPairs.ElementAt(ip).p1.x - iPointPairs.ElementAt(ip).p2.x) < -100))
                 {
                     bestIPoint = ip;
                     return bestIPoint;
                 }
             }
-            MessageBox.Show("Найти подходящую точку совмещения не удалось");
             return bestIPoint;
         }
 
@@ -133,7 +132,7 @@ namespace SURF
                         dist2 = d;
                 }
 
-                if (dist1 < 0.3 * dist2)
+                if (dist1 < 0.2 * dist2)
                 {
                     matched.Add(new InterestPointPair { p1 = ip, p2 = neighbour, dist = dist1 }); //Пары одинаковых ключевых точек из соседних кадров
                 }
@@ -155,8 +154,6 @@ namespace SURF
             for (Int32 i = 0; i < 7; i++)
                 iPoints_left.Add(null);
 
-            //Интегральное изображение
-            IntegralImage intImage;
 
             Parallel.For(0, 7, i =>
             {
@@ -169,7 +166,7 @@ namespace SURF
                     {
                         //Получение интегрального изображения
                         loadInfo.Text = "Получение интегрального изображения снимка " + (i + 1).ToString();
-                        intImage = IntegralImage.FromImage(eyeImages_left[i]);
+                        IntegralImage intImage = IntegralImage.FromImage(eyeImages_left[i]);
 
                         //Поиск ключевых точек
                         loadInfo.Text = "Поиск ключевых точек снимка " + (i + 1).ToString(); ;
@@ -207,9 +204,6 @@ namespace SURF
             for (Int32 i = 0; i < 7; i++)
                 iPoints_right.Add(null);
 
-            //Интегральное изображение
-            IntegralImage intImage;
-
             Parallel.For(0, 7, i =>
             {
                 try
@@ -221,7 +215,8 @@ namespace SURF
                     {
                         //Получение интегрального изображения
                         loadInfo.Text = "Получение интегрального изображения снимка " + (i + 1).ToString();
-                        intImage = IntegralImage.FromImage(eyeImages_right[i]);
+                        //Интегральное изображение
+                        IntegralImage intImage = IntegralImage.FromImage(eyeImages_right[i]);
 
                         //Поиск ключевых точек
                         loadInfo.Text = "Поиск ключевых точек снимка " + (i + 1).ToString(); ;
@@ -257,25 +252,62 @@ namespace SURF
 
             //Double x1 = 850, y1 = 750;
 
+            //Расставляем снимки по схеме
             x.Add(1050); y.Add(1150);
             x.Add(2000); y.Add(1150);
             x.Add(2850); y.Add(1150);
             x.Add(2000); y.Add(400);
             x.Add(2000); y.Add(1900);
-            x.Add(200); y.Add(400);
-            x.Add(200); y.Add(1900);
+            x.Add(200);  y.Add(400);
+            x.Add(200);  y.Add(1900);
 
 
-            iPointPairs = CreatePairs(iPoints_left[0],iPoints_left[1]);
-            iPoint_number = bestIPoint_idSearch();
-
-            if (iPoint_number != -1)
+            //Сомещаем, если есть общие ключевые точки
+            //-Для первых трех снимков
+            for (Int32 i = 0; i < 3; i++)
             {
-                iPointPairs.ElementAt(iPoint_number).p1.x;
-                iPointPairs.ElementAt(iPoint_number).p1.y;
+                iPointPairs = CreatePairs(iPoints_left[i], iPoints_left[i+1]);
+                iPoint_number = bestIPoint_idSearch();
 
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i+1] = Convert.ToInt32(x[i] + x1);
+                    y[i+1] = Convert.ToInt32(y[i] + y1);
+                }
             }
+            //-Для 4го и 5го снимков
+            for (Int32 i = 3; i < 5; i++)
+            {
+                iPointPairs = CreatePairs(iPoints_left[1], iPoints_left[i]);
+                iPoint_number = bestIPoint_idSearch();
 
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i] = Convert.ToInt32(x[1] + x1);
+                    y[i] = Convert.ToInt32(y[1] + y1);
+                }
+            }
+            //-Для 6го и 7го снимков
+            for (Int32 i = 5; i < 7; i++)
+            {
+                iPointPairs = CreatePairs(iPoints_left[0], iPoints_left[i]);
+                iPoint_number = bestIPoint_idSearch();
+
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i] = Convert.ToInt32(x[0] + x1);
+                    y[i] = Convert.ToInt32(y[0] + y1);
+                }
+            }
 
             
             Bitmap img = new Bitmap(5000, 4000);
@@ -288,9 +320,13 @@ namespace SURF
             Region fill = new Region(rect);
             g.FillRegion(blck, fill);
 
+            
             for(Int32 i = x.Count-1; i >= 0; i--)
                 g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
-
+            /*
+            for (Int32 i = 0; i < 2; i++)
+                g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
+            */
             pictureImage.Image = img;
 
             eyeImages_left.Add(img);
