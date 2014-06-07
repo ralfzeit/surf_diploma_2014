@@ -258,9 +258,10 @@ namespace SURF
             x.Add(2850); y.Add(1150);
             x.Add(2000); y.Add(400);
             x.Add(2000); y.Add(1900);
-            x.Add(200);  y.Add(400);
+            x.Add(250);  y.Add(400);
             x.Add(200);  y.Add(1900);
 
+            Int32 check = 0;
 
             //Сомещаем, если есть общие ключевые точки
             //-Для первых трех снимков
@@ -276,6 +277,7 @@ namespace SURF
 
                     x[i+1] = Convert.ToInt32(x[i] + x1);
                     y[i+1] = Convert.ToInt32(y[i] + y1);
+                    check++;
                 }
             }
             //-Для 4го и 5го снимков
@@ -291,6 +293,7 @@ namespace SURF
 
                     x[i] = Convert.ToInt32(x[1] + x1);
                     y[i] = Convert.ToInt32(y[1] + y1);
+                    check++;
                 }
             }
             //-Для 6го и 7го снимков
@@ -306,9 +309,11 @@ namespace SURF
 
                     x[i] = Convert.ToInt32(x[0] + x1);
                     y[i] = Convert.ToInt32(y[0] + y1);
+                    check++;
                 }
             }
 
+            MessageBox.Show((7 - check).ToString() + " снимков из 7 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
             
             Bitmap img = new Bitmap(5000, 4000);
 
@@ -338,7 +343,97 @@ namespace SURF
         /// </summary>
         private void rightDRAWING()
         {
+            List<Int32> x = new List<Int32>(7);
+            List<Int32> y = new List<Int32>(7);
+            Int32 iPoint_number;
 
+            //Double x1 = 850, y1 = 750;
+
+            //Расставляем снимки по схеме
+            x.Add(1900); y.Add(1500);
+            x.Add(1500); y.Add(1500);
+            x.Add(500); y.Add(1350);
+            x.Add(400); y.Add(450);
+            x.Add(900); y.Add(2350);
+            x.Add(2250); y.Add(150);
+            x.Add(2850); y.Add(2650);
+
+            Int32 check = 0;
+
+            //Сомещаем, если есть общие ключевые точки
+            //-Для первых трех снимков
+            for (Int32 i = 0; i < 3; i++)
+            {
+                iPointPairs = CreatePairs(iPoints_right[i], iPoints_right[i + 1]);
+                iPoint_number = bestIPoint_idSearch();
+
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i + 1] = Convert.ToInt32(x[i] + x1);
+                    y[i + 1] = Convert.ToInt32(y[i] + y1);
+                    check++;
+                }
+            }
+            //-Для 4го и 5го снимков
+            for (Int32 i = 3; i < 5; i++)
+            {
+                iPointPairs = CreatePairs(iPoints_right[1], iPoints_right[i]);
+                iPoint_number = bestIPoint_idSearch();
+
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i] = Convert.ToInt32(x[1] + x1);
+                    y[i] = Convert.ToInt32(y[1] + y1);
+                    check++;
+                }
+            }
+            //-Для 6го и 7го снимков
+            for (Int32 i = 5; i < 7; i++)
+            {
+                iPointPairs = CreatePairs(iPoints_right[0], iPoints_right[i]);
+                iPoint_number = bestIPoint_idSearch();
+
+                if (iPoint_number != -1)
+                {
+                    Double x1 = iPointPairs.ElementAt(iPoint_number).p1.x - iPointPairs.ElementAt(iPoint_number).p2.x;
+                    Double y1 = iPointPairs.ElementAt(iPoint_number).p1.y - iPointPairs.ElementAt(iPoint_number).p2.y;
+
+                    x[i] = Convert.ToInt32(x[0] + x1);
+                    y[i] = Convert.ToInt32(y[0] + y1);
+                    check++;
+                }
+            }
+
+            MessageBox.Show((7-check).ToString() + " снимков из 7 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            Bitmap img = new Bitmap(5000, 4500);
+
+            Graphics g = Graphics.FromImage(img);
+            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
+
+            SolidBrush blck = new SolidBrush(Color.Black);
+
+            Region fill = new Region(rect);
+            g.FillRegion(blck, fill);
+
+            /*
+            for (Int32 i = x.Count - 1; i >= 0; i--)
+                g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
+            */
+            for (Int32 i = 0; i < x.Count; i++)
+                g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
+            
+            pictureImage.Image = img;
+
+            eyeImages_right.Add(img);
+            rightListBox.Items.Add("Результат сшивки");
         }
 
         /// <summary>
@@ -437,8 +532,7 @@ namespace SURF
 
                 leftDRAWING();
 
-                if (check_leftDRAW() == true) MessageBox.Show("Сшивка изображений возможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else MessageBox.Show("Сшивка изображений невозможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Сшивка завершена", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -496,9 +590,10 @@ namespace SURF
                 //Метод SURF
                 rightSURF();
 
+                //Сшивка снимков
+                rightDRAWING();
 
-                if (check_rightDRAW() == true) MessageBox.Show("Сшивка изображений возможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else MessageBox.Show("Сшивка изображений невозможна", "Информация SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Сшивка завершена", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
         
@@ -557,71 +652,6 @@ namespace SURF
             return true;
         }
 
-        /// <summary>
-        /// Сшивка изображения
-        /// </summary>
-        private void drawFullleft(Bitmap image1, Bitmap image2, Int32 i)
-        {
-            Double x1 = iPointPairs.ElementAt(i).p1.x;
-            Double y1 = iPointPairs.ElementAt(i).p1.y;
-            Double x2 = iPointPairs.ElementAt(i).p2.x;
-            Double y2 = iPointPairs.ElementAt(i).p2.y;
-            Double xx = x1 - x2;
-            Double yy = y1 - y2;
-
-            MessageBox.Show(image1.Width.ToString() + "   " + image1.Height.ToString());
-
-            Bitmap img = new Bitmap(image1.Width + (image2.Width - Convert.ToInt32(xx)), image1.Height + (image2.Height - Convert.ToInt32(yy)));
-
-            Graphics g = Graphics.FromImage(img);
-            Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
-
-            SolidBrush blck = new SolidBrush(Color.Black);
-
-            Region fill = new Region(rect);
-            g.FillRegion(blck, fill);
-
-            g.DrawImage(image1, new Point(0, 0));
-            g.DrawImage(image2, new Point(Convert.ToInt32(xx), Convert.ToInt32(yy)));
-
-
-            pictureImage.Image = img;
-
-            eyeImages_left.Add(img);
-            leftListBox.Items.Add("SURFED");
-
-            MessageBox.Show(xx.ToString() + "  " + yy.ToString());
-        }
-
-        private void miniSURFleft(Bitmap img)
-        {
-            IntegralImage intImage;
-            try
-            {
-                //Загружаем изображение
-                loadInfo.Text = "Обработка изображения";
-
-                if (bkgrFilter(img, Color.FromArgb(0, 0, 0), 30))
-                {
-                    //Получение интегрального изображения
-                    loadInfo.Text = "Получение интегрального изображения снимка ";
-                    intImage = IntegralImage.FromImage(img);
-
-                    //Поиск ключевых точек
-                    loadInfo.Text = "Поиск ключевых точек снимка";
-                    iPoints_left.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
-                    loadInfo.Text = "Поиск дескрипторов ключевых точек снимка";
-                    SURFDescriptor.DecribeInterestPoints(iPoints_left.Last(), intImage);
-
-                    loadInfo.Text = "";
-                }
-                else MessageBox.Show("Ошибка при обработке изображения " , "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch
-            {
-                MessageBox.Show("Ошибка при обработке изображения " , "Ошибка SURF", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
 
         /// <summary>
         /// Нормализация яркости снимков левого глаза
@@ -1097,190 +1127,7 @@ namespace SURF
             this.Close();
         }
 
-        #region Хлам
-
-        /// <summary>
-        /// Загрузка одного изображения
-        /// </summary>
-        private void open_image()
-        {
-            //Диалог открытия файла
-            OpenFileDialog openFD = new OpenFileDialog();
-            if (openFD.ShowDialog() == DialogResult.OK)
-            {
-                string imgPath = openFD.FileName;
-                this.Cursor = Cursors.WaitCursor;
-
-                try
-                {
-                    loadInfo.Text = "Загрузка изображения " + imgPath;
-                    Bitmap image = new Bitmap(imgPath);
-
-                    pictureImage.Image = image;
-                    pictureImage.BackColor = Color.White;
-
-                    loadInfo.Text = "Исходное изображение получено";
-
-                    bkgrFilter(image, Color.FromArgb(1, 1, 1), 30);
-
-                    loadInfo.Text = "Удален фон";
-
-                    loadInfo.Text = "Получение интегрального изображения";
-
-                    IntegralImage iImage = IntegralImage.FromImage(image);
-
-                    loadInfo.Text = "Получение ключевых точек";
-                    iPoints = FastHessian.getIpoints(0.0002f, 5, 2, iImage);
-                    SURFDescriptor.DecribeInterestPoints(iPoints, iImage);
-
-                    loadInfo.Text = "Отображение результатов работы SURF";
-                    drawSURF(image, iPoints);
-
-                    loadInfo.Text = "";
-
-                }
-                catch
-                {
-                    MessageBox.Show("Ошибка при обработке изображения", imgPath.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                this.Cursor = Cursors.Arrow;
-
-                pictureImage.Refresh();
-            }
-        }
-
-        /// <summary>
-        /// Загрузка нескольких изображений и поиск ключевых точек для каждого изображения
-        /// </summary>
-        private void images_n_points()
-        {
-            //Диалог открытия файлов
-            if (open_images.ShowDialog() == DialogResult.OK && open_images.FileNames.Count() > 0)
-            {
-                //Очистка списков изображений и соответствующих ключевых точек
-                imageN.Clear();
-                iPointsN.Clear();
-
-                this.Cursor = Cursors.WaitCursor;
-
-                Int32 imgCount = open_images.FileNames.Count(); //Количество изображений
-                IntegralImage intImage; //Интегральное изображение
-
-                for (Int32 i = 0; i < imgCount; i++)
-                {
-                    string imgPath = open_images.FileNames[i];
-                    try
-                    {
-                        //Загружаем изображение
-                        loadInfo.Text = "Загрузка изображения " + imgPath;
-
-                        //Обрезка и добавление изображения
-                        imageN.Add(CropImg(new Bitmap(imgPath), rect));
-
-                        if (bkgrFilter(imageN.Last(), Color.FromArgb(0, 0, 0), 30))
-                        {
-
-                            //pictureBox.Image = imageN.Last();
-
-                            //Получим интегральное изображение
-                            loadInfo.Text = "Получение интегрального изображения";
-                            intImage = IntegralImage.FromImage(imageN.Last());
-
-                            //Найдем ключевые точки
-                            loadInfo.Text = "Поиск ключевых точек";
-                            iPointsN.Add(FastHessian.getIpoints(0.0002f, 5, 2, intImage));
-                            loadInfo.Text = "Поиск дескрипторов ключевых точек";
-                            SURFDescriptor.DecribeInterestPoints(iPointsN.Last(), intImage);
-
-                            //Отобразим результаты работы SURF
-                            loadInfo.Text = "Применение результатов для " + imgPath;
-                            drawSURF(imageN.Last(), iPointsN.Last());
-
-                            loadInfo.Text = "";
-                        }
-                        else MessageBox.Show("Ошибка при обработке изображения", imgPath.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Ошибка при обработке изображения", imgPath.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-
-                MessageBox.Show("Загрузка изображений завершена", "Загрузка изображений", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                if (imageN.Count > 1)
-                {
-                    iPointPairs = CreatePairs(iPointsN[0], iPointsN[1]);
-                    if (iPointPairs.Count == 0)
-                        MessageBox.Show("Нет общих ключевых точек!");
-                    else
-                    {
-                        String pairs1 = "";
-                        for (Int32 pi1 = 0; pi1 < iPointPairs.Count; pi1++)
-                            pairs1 += "(" + iPointPairs.ElementAt(pi1).p1.x.ToString() + ";" + iPointPairs.ElementAt(pi1).p1.y.ToString() + ")  " +
-                                            "(" + iPointPairs.ElementAt(pi1).p2.x.ToString() + ";" + iPointPairs.ElementAt(pi1).p2.y.ToString() + ")" + Environment.NewLine;
-
-
-                        MessageBox.Show(pairs1, "Пары найденных ключевых точек"); //DEBUG
-
-                        drawFullleft(imageN[0], imageN[1], bestIPoint_idSearch());
-                    }
-                }
-
-                //  MessageBox.Show(InterestPoint.compareDescriptors(iPointsN[0][1], iPointsN[2][1], 1).ToString());
-
-                this.Cursor = Cursors.Arrow;
-            }
-        }
-
-        /// <summary>
-        /// Сохранить как (Ctrl+S)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void save_image_as(object sender, EventArgs e)
-        {
-            sia();
-        }
-
-        /// <summary>
-        /// Сохранить как
-        /// </summary>
-        private void sia()
-        {
-            if (pictureImage.Image != null)
-            {
-                if (save_image.ShowDialog() == DialogResult.OK)
-                {
-                    this.Cursor = Cursors.WaitCursor;
-                    try
-                    {
-                        pictureImage.Image.Save(save_image.FileName, ImageFormat.Jpeg);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Ошибка при сохранении изображения", save_image.FileName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    this.Cursor = Cursors.Arrow;
-                }
-            }
-            else MessageBox.Show("Нет изображения", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        /// <summary>
-        /// Открыть (Ctrl+O)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void open_img_click(object sender, EventArgs e)
-        {
-            //open_image();
-            images_n_points();
-        }
-
-        #endregion
-
-
+    
         /// <summary>
         /// Сохранить результаты обработки правого глаза
         /// </summary>
