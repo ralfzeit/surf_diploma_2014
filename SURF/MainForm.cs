@@ -40,14 +40,6 @@ namespace SURF
         Int32 avg_Right;                                                            //Средняя яркость комплекта
         List<Int32> delta_rightBrightness = new List<Int32>();                      //Дельта яркости
 
-
-        //Ключевые точки
-        List<InterestPoint> iPoints = new List<InterestPoint>();
-
-        //Несколько изображений и соответствующие им ключевые точки
-        List<Bitmap> imageN = new List<Bitmap>();
-        List<List<InterestPoint>> iPointsN = new List<List<InterestPoint>>();
-
         //Пары ключевых точек 2х соседних изображений
         ConcurrentBag<InterestPointPair> iPointPairs = new ConcurrentBag<InterestPointPair>();
 
@@ -478,6 +470,24 @@ namespace SURF
         /// </summary>
         private void loadLeftImages(object sender, EventArgs e)
         {
+            //Загрузка настроек
+            bool check_normalize = false;
+            Double contrastK = 1.0;
+
+            try
+            {
+                StreamReader sr = new StreamReader("settings.dat");
+
+                contrastK = Convert.ToDouble(sr.ReadLine()) / 10;
+
+                if (sr.ReadLine() == "1")
+                    check_normalize = true;
+
+                sr.Close();
+            }
+            catch { }
+
+
             //Диалог открытия файлов
             if (open_images.ShowDialog() == DialogResult.OK)
             {
@@ -522,10 +532,11 @@ namespace SURF
                 do_avg_leftBrightness();
 
                 //Нормализация яркости
-                normalize_leftBrightness();
+                if(check_normalize == true)
+                    normalize_leftBrightness();
 
                 //Установка контраста
-                contrast_left(trackBar1.Value / 10);
+                contrast_left(contrastK);
 
                 //Метод SURF
                 leftSURF();
@@ -533,6 +544,8 @@ namespace SURF
                 leftDRAWING();
 
                 MessageBox.Show("Сшивка завершена", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                button_saveLeft.Enabled = true;
             }
         }
 
@@ -541,6 +554,24 @@ namespace SURF
         /// </summary>
         private void loadRightImages(object sender, EventArgs e)
         {
+            //Загрузка настроек
+            bool check_normalize = false;
+            Double contrastK = 1.0;
+
+            try
+            {
+                StreamReader sr = new StreamReader("settings.dat");
+
+                contrastK = Convert.ToDouble(sr.ReadLine()) / 10;
+
+                if (sr.ReadLine() == "1")
+                    check_normalize = true;
+
+                sr.Close();
+            }
+            catch { }
+
+
             //Диалог открытия файлов
             if (open_images.ShowDialog() == DialogResult.OK)
             {
@@ -585,7 +616,11 @@ namespace SURF
                 do_avg_rightBrightness();
 
                 //Нормализация яркости
-                normalize_rightBrightness();
+                if (check_normalize == true)
+                    normalize_rightBrightness();
+
+                //Установка контраста
+                contrast_right(contrastK);
 
                 //Метод SURF
                 rightSURF();
@@ -594,6 +629,8 @@ namespace SURF
                 rightDRAWING();
 
                 MessageBox.Show("Сшивка завершена", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                button_saveRight.Enabled = true;
             }
         }
         
@@ -780,10 +817,67 @@ namespace SURF
             }
         }
 
-        
-        ///!!!!!!!!!!!!!!!!!!
-        ///Здесь должен быть контраст для правого глаза
-        ///!!!!!!!!!!!!!!!!!!
+
+        /// <summary>
+        /// Изменение контраста снимков правого глаза
+        /// </summary>
+        /// <param name="k">Коэффициент контраста</param>
+        private unsafe void contrast_right(Double k)
+        {
+            for (Int32 img = 0; img < 7; img++)
+            {
+                BitmapData bmData = null;
+                try
+                {
+                    bmData = eyeImages_right[img].LockBits(new Rectangle(0, 0, eyeImages_right[img].Width, eyeImages_right[img].Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+
+                    int w = bmData.Width;
+                    int h = bmData.Height;
+
+                    for (int y = 0; y < h; y++)
+                    {
+                        byte* p = (byte*)bmData.Scan0.ToPointer();
+                        p += (y * bmData.Stride);
+
+                        for (int x = 0; x < w; x++)
+                        {
+                            double r = p[0], g = p[1], b = p[2];
+
+                            r = (((r - avg_rightBrightness[img]) * k) + avg_rightBrightness[img]);
+                            g = (((g - avg_rightBrightness[img]) * k) + avg_rightBrightness[img]);
+                            b = (((b - avg_rightBrightness[img]) * k) + avg_rightBrightness[img]);
+
+
+                            int iR = (int)r;
+                            iR = iR > 255 ? 255 : iR;
+                            iR = iR < 0 ? 0 : iR;
+                            int iG = (int)g;
+                            iG = iG > 255 ? 255 : iG;
+                            iG = iG < 0 ? 0 : iG;
+                            int iB = (int)b;
+                            iB = iB > 255 ? 255 : iB;
+                            iB = iB < 0 ? 0 : iB;
+
+                            p[0] = (byte)iR;
+                            p[1] = (byte)iG;
+                            p[2] = (byte)iB;
+
+                            p += 4;
+                        }
+                    };
+
+                    eyeImages_right[img].UnlockBits(bmData);
+                }
+                catch
+                {
+                    try
+                    {
+                        eyeImages_right[img].UnlockBits(bmData);
+                    }
+                    catch { }
+                }
+            }
+        }
 
         /// <summary>
         /// Нормализация яркости снимков правого глаза
@@ -974,22 +1068,6 @@ namespace SURF
         #region Методы для управления отображением изображения
 
         /// <summary>
-        /// Отображение изображений в listBox
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void leftListBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            int pos = e.Index;
-            e.DrawBackground();
-            e.Graphics.DrawImage((Image)leftListBox.Items[pos], new Point(5, e.Bounds.Top + 5));
-            e.Graphics.DrawString(string.Format("Item #{0}", pos), new Font("Arial", 32.0f,
-                FontStyle.Bold | FontStyle.Italic), Brushes.DarkOliveGreen, new Point(125, e.Bounds.Top + 5));
-            e.DrawFocusRectangle();
-        }
-
-
-        /// <summary>
         /// Отобразить выбранное изображение левого глаза
         /// </summary>
         /// <param name="sender"></param>
@@ -1007,63 +1085,6 @@ namespace SURF
         private void viewRightImage(object sender, EventArgs e)
         {
             pictureImage.Image = eyeImages_right[rightListBox.SelectedIndex];
-        }
-
-        /// <summary>
-        /// Лупа
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void UpdateZoomedImage(object sender, MouseEventArgs e)
-        {
-            if (pictureImage.Image != null && pixelInfo.Visible == true)
-            {
-
-                int zoomWidth = 10;
-                int zoomHeight = 10;
-
-
-                //Вычисляем центр
-
-                int halfWidth = 5;
-                int halfHeight = 5;
-
-
-                Bitmap tempBitmap = new Bitmap(zoomWidth, zoomHeight,
-                                               PixelFormat.Format24bppRgb);
-                Graphics bmGraphics = Graphics.FromImage(tempBitmap);
-
-
-                bmGraphics.Clear(Color.Black);
-
-                bmGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                bmGraphics.DrawImage(pictureImage.Image,
-                                     new Rectangle(0, 0, zoomWidth, zoomHeight),
-                                     new Rectangle(e.X - halfWidth, e.Y - halfHeight,
-                                     zoomWidth, zoomHeight), GraphicsUnit.Pixel);
-
-                //Отобразим информацию о пикселе под курсором
-
-                pixelInfo.Text = "R: " + tempBitmap.GetPixel(halfWidth, halfHeight).R.ToString() +
-                            "  G: " + tempBitmap.GetPixel(halfWidth, halfHeight).G.ToString() +
-                            "  B: " + tempBitmap.GetPixel(halfWidth, halfHeight).B.ToString() + "  Brightness: " +
-                    ((tempBitmap.GetPixel(halfWidth, halfHeight).R + tempBitmap.GetPixel(halfWidth, halfHeight).G + tempBitmap.GetPixel(halfWidth, halfHeight).B) / 3).ToString();
-
-                //Рисуем крест на увеличенном изображении
-
-                bmGraphics.DrawLine(Pens.Black, halfWidth + 1,
-                                    halfHeight - 4, halfWidth + 1, halfHeight - 1);
-                bmGraphics.DrawLine(Pens.Black, halfWidth + 1, halfHeight + 6,
-                                    halfWidth + 1, halfHeight + 3);
-                bmGraphics.DrawLine(Pens.Black, halfWidth - 4, halfHeight + 1,
-                                    halfWidth - 1, halfHeight + 1);
-                bmGraphics.DrawLine(Pens.Black, halfWidth + 6, halfHeight + 1,
-                                    halfWidth + 3, halfHeight + 1);
-
-
-                bmGraphics.Dispose();
-            }
         }
 
         /// <summary>
@@ -1107,6 +1128,66 @@ namespace SURF
             this.pictureImage.Height = this.panel1.Height;
         }
 
+
+        /// <summary>
+        /// Отображение информации о пикселе изображения под курсором мыши
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UpdateZoomedImage(object sender, MouseEventArgs e)
+        {
+            if (pictureImage.Image != null && pixelInfo.Visible == true)
+            {
+
+                int zoomWidth = 10;
+                int zoomHeight = 10;
+
+
+                //Вычисляем центр
+
+                int halfWidth = 5;
+                int halfHeight = 5;
+
+
+                Bitmap tempBitmap = new Bitmap(zoomWidth, zoomHeight,
+                                               PixelFormat.Format24bppRgb);
+                Graphics bmGraphics = Graphics.FromImage(tempBitmap);
+
+
+                bmGraphics.Clear(Color.Black);
+
+                bmGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                bmGraphics.DrawImage(pictureImage.Image,
+                                     new Rectangle(0, 0, zoomWidth, zoomHeight),
+                                     new Rectangle(e.X - halfWidth, e.Y - halfHeight,
+                                     zoomWidth, zoomHeight), GraphicsUnit.Pixel);
+
+                //Отобразим информацию о пикселе под курсором
+
+                pixelInfo.Text = "R: " + tempBitmap.GetPixel(halfWidth, halfHeight).R.ToString() +
+                            "  G: " + tempBitmap.GetPixel(halfWidth, halfHeight).G.ToString() +
+                            "  B: " + tempBitmap.GetPixel(halfWidth, halfHeight).B.ToString() + "  Brightness: " +
+                            (Convert.ToInt32(tempBitmap.GetPixel(halfWidth, halfHeight).R * 0.3 + 
+                            tempBitmap.GetPixel(halfWidth, halfHeight).G * 0.59 + 
+                            tempBitmap.GetPixel(halfWidth, halfHeight).B * 0.11)).ToString();
+
+                //Рисуем крест на увеличенном изображении
+
+                bmGraphics.DrawLine(Pens.Black, halfWidth + 1,
+                                    halfHeight - 4, halfWidth + 1, halfHeight - 1);
+                bmGraphics.DrawLine(Pens.Black, halfWidth + 1, halfHeight + 6,
+                                    halfWidth + 1, halfHeight + 3);
+                bmGraphics.DrawLine(Pens.Black, halfWidth - 4, halfHeight + 1,
+                                    halfWidth - 1, halfHeight + 1);
+                bmGraphics.DrawLine(Pens.Black, halfWidth + 6, halfHeight + 1,
+                                    halfWidth + 3, halfHeight + 1);
+
+
+                bmGraphics.Dispose();
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -1127,7 +1208,8 @@ namespace SURF
             this.Close();
         }
 
-    
+        #region Сохранение результатов
+
         /// <summary>
         /// Сохранить результаты обработки правого глаза
         /// </summary>
@@ -1135,10 +1217,15 @@ namespace SURF
         /// <param name="e"></param>
         private void saveRight(object sender, EventArgs e)
         {
+            /*
             Parallel.For(0, 7, img =>
             {
                 eyeImages_right[img].Save("left_" + (img + 1).ToString() + ".png", ImageFormat.Png);
             });
+             */
+
+            if(save_image.ShowDialog() == DialogResult.OK)
+                eyeImages_right.Last().Save(save_image.FileName, ImageFormat.Jpeg);
         }
 
         /// <summary>
@@ -1148,257 +1235,28 @@ namespace SURF
         /// <param name="e"></param>
         private void saveLeft(object sender, EventArgs e)
         {
+            /*
             Parallel.For(0, 7, img =>
             {
                 eyeImages_left[img].Save("left_" + (img + 1).ToString() + ".png", ImageFormat.Png);
             });
+            */
+
+            if (save_image.ShowDialog() == DialogResult.OK)
+                eyeImages_left.Last().Save(save_image.FileName, ImageFormat.Jpeg);
         }
 
-        private void contrast_Left_clck(object sender, EventArgs e)
+        #endregion
+
+        /// <summary>
+        /// Настройки препарирования
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void open_settings(object sender, EventArgs e)
         {
-            contrast_left(trackBar1.Value / 10);
-        }
-
-
-        //Эрозия
-        private unsafe Image erodeIMG(Image input)
-        {
-            Bitmap bmp = (Bitmap)input;
-            Bitmap bmpSrc = (Bitmap)input;
-
-            BitmapData bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                                ImageLockMode.ReadWrite,
-                                PixelFormat.Format1bppIndexed);
-
-            int stride = bmData.Stride;
-            int stride2 = bmData.Stride * 2;
-            IntPtr Scan0 = bmData.Scan0;
-
-            byte* p = (byte*)(void*)Scan0;
-
-            int nOffset = stride - bmp.Width * 3;
-            int nWidth = bmp.Width - 2;
-            int nHeight = bmp.Height - 2;
-
-            var w = bmp.Width;
-            var h = bmp.Height;
-
-            var rp = p;
-            var empty = (byte)0;
-            byte c, cm;
-            int i = 0;
-
-            // Erode every pixel
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x += 3, i++)
-                {
-                    // Middle pixel
-                    cm = p[y * stride + x];
-                    if (cm == empty) { continue; }
-
-                    #region FirstRow
-                    // Row 0
-                    // Left pixel
-                    if (x - 3 > 0 && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x - 3)];
-                        if (c == empty) { continue; }
-                    }
-                    // Middle left pixel
-                    if (x - 2 > 0 && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x - 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 1 > 0 && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x - 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + x];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 1 < w && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x + 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 2 < w && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x + 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 3 < w && y - 2 > 0)
-                    {
-                        c = p[(y - 2) * stride + (x + 3)];
-                        if (c == empty) { continue; }
-                    }
-                    #endregion
-
-                    #region SecondRow
-                    // Row 1
-                    // Left pixel 
-                    if (x - 3 > 0 && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x - 3)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 2 > 0 && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x - 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 1 > 0 && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x - 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + x];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 1 < w && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x + 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 2 < w && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x + 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 3 < w && y - 1 > 0)
-                    {
-                        c = p[(y - 1) * stride + (x + 3)];
-                        if (c == empty) { continue; }
-                    }
-
-                    #endregion
-
-                    #region ThirdRow
-                    // Row 2
-                    if (x - 3 > 0)
-                    {
-                        c = p[y * stride + (x - 3)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 2 > 0)
-                    {
-                        c = p[y * stride + (x - 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 1 > 0)
-                    {
-                        c = p[y * stride + (x - 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 1 < w)
-                    {
-                        c = p[y * stride + (x + 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 2 < w)
-                    {
-                        c = p[y * stride + (x + 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 3 < w)
-                    {
-                        c = p[y * stride + (x + 3)];
-                        if (c == empty) { continue; }
-                    }
-                    #endregion
-
-                    #region FourthRow
-                    // Row 3
-                    if (x - 3 > 0 && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x - 3)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 2 > 0 && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x - 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 1 > 0 && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x - 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + x];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 1 < w && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x + 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 2 < w && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x + 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 3 < w && y + 1 < h)
-                    {
-                        c = p[(y + 1) * stride + (x + 3)];
-                        if (c == empty) { continue; }
-                    }
-                    #endregion
-
-                    #region FifthRow
-                    // Row 4
-                    if (x - 3 > 0 && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x - 3)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 2 > 0 && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x - 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x - 1 > 0 && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x - 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + x];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 1 < w && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x + 1)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 2 < w && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x + 2)];
-                        if (c == empty) { continue; }
-                    }
-                    if (x + 3 < w && y + 2 < h)
-                    {
-                        c = p[(y + 2) * stride + (x + 3)];
-                        if (c == empty) { continue; }
-                    }
-                    #endregion
-
-                    // If all neighboring pixels are processed 
-                    // it's clear that the current pixel is not a boundary pixel.
-                    rp[i] = cm;
-                }
-            }
-
-            bmpSrc.UnlockBits(bmData);
-            return bmpSrc;
+            SettingsForm sf = new SettingsForm();
+            sf.ShowDialog();
         }
     
 

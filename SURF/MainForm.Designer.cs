@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.фАЙЛToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.выходToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.оТОБРАЖЕНИЕToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,7 +53,6 @@
             this.button_openRight = new System.Windows.Forms.Button();
             this.button_saveRight = new System.Windows.Forms.Button();
             this.rightListBox = new System.Windows.Forms.ListBox();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureImage)).BeginInit();
             this.panel1.SuspendLayout();
@@ -60,7 +60,6 @@
             this.tabControl1.SuspendLayout();
             this.leftTab.SuspendLayout();
             this.rightTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -78,22 +77,31 @@
             // фАЙЛToolStripMenuItem
             // 
             this.фАЙЛToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.настройкиToolStripMenuItem,
             this.toolStripSeparator1,
             this.выходToolStripMenuItem});
             this.фАЙЛToolStripMenuItem.Name = "фАЙЛToolStripMenuItem";
             this.фАЙЛToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.фАЙЛToolStripMenuItem.Text = "ФАЙЛ";
             // 
+            // настройкиToolStripMenuItem
+            // 
+            this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
+            this.настройкиToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F12)));
+            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.настройкиToolStripMenuItem.Text = "Настройки";
+            this.настройкиToolStripMenuItem.Click += new System.EventHandler(this.open_settings);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(179, 6);
             // 
             // выходToolStripMenuItem
             // 
             this.выходToolStripMenuItem.Name = "выходToolStripMenuItem";
-            this.выходToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
-            this.выходToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.выходToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.выходToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.выходToolStripMenuItem.Text = "Выход";
             this.выходToolStripMenuItem.Click += new System.EventHandler(this.close_app);
             // 
@@ -197,7 +205,6 @@
             // 
             // leftTab
             // 
-            this.leftTab.Controls.Add(this.trackBar1);
             this.leftTab.Controls.Add(this.button_openLeft);
             this.leftTab.Controls.Add(this.button_saveLeft);
             this.leftTab.Controls.Add(this.leftListBox);
@@ -212,7 +219,7 @@
             // button_openLeft
             // 
             this.button_openLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button_openLeft.Location = new System.Drawing.Point(6, 428);
+            this.button_openLeft.Location = new System.Drawing.Point(6, 425);
             this.button_openLeft.Name = "button_openLeft";
             this.button_openLeft.Size = new System.Drawing.Size(205, 23);
             this.button_openLeft.TabIndex = 2;
@@ -223,6 +230,7 @@
             // button_saveLeft
             // 
             this.button_saveLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveLeft.Enabled = false;
             this.button_saveLeft.Location = new System.Drawing.Point(6, 454);
             this.button_saveLeft.Name = "button_saveLeft";
             this.button_saveLeft.Size = new System.Drawing.Size(205, 23);
@@ -238,7 +246,7 @@
             this.leftListBox.FormattingEnabled = true;
             this.leftListBox.Location = new System.Drawing.Point(3, 3);
             this.leftListBox.Name = "leftListBox";
-            this.leftListBox.Size = new System.Drawing.Size(211, 342);
+            this.leftListBox.Size = new System.Drawing.Size(211, 407);
             this.leftListBox.TabIndex = 0;
             this.leftListBox.SelectedIndexChanged += new System.EventHandler(this.viewLeftImage);
             // 
@@ -269,6 +277,7 @@
             // button_saveRight
             // 
             this.button_saveRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button_saveRight.Enabled = false;
             this.button_saveRight.Location = new System.Drawing.Point(6, 454);
             this.button_saveRight.Name = "button_saveRight";
             this.button_saveRight.Size = new System.Drawing.Size(205, 23);
@@ -284,20 +293,9 @@
             this.rightListBox.FormattingEnabled = true;
             this.rightListBox.Location = new System.Drawing.Point(3, 3);
             this.rightListBox.Name = "rightListBox";
-            this.rightListBox.Size = new System.Drawing.Size(211, 355);
+            this.rightListBox.Size = new System.Drawing.Size(211, 407);
             this.rightListBox.TabIndex = 1;
             this.rightListBox.SelectedIndexChanged += new System.EventHandler(this.viewRightImage);
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.trackBar1.Location = new System.Drawing.Point(8, 351);
-            this.trackBar1.Maximum = 30;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(203, 45);
-            this.trackBar1.TabIndex = 4;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.trackBar1.Value = 10;
             // 
             // MainForm
             // 
@@ -314,7 +312,8 @@
             this.MinimumSize = new System.Drawing.Size(900, 600);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Поиск ключевых точек методом SURF";
+            this.Text = "ПО для сшивки изображений на примере результатов ретинографии глазного дна с испо" +
+    "льзованием метода SURF";
             this.SizeChanged += new System.EventHandler(this.windowsSizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -324,9 +323,7 @@
             this.statusStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.leftTab.ResumeLayout(false);
-            this.leftTab.PerformLayout();
             this.rightTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -357,7 +354,7 @@
         private System.Windows.Forms.ListBox rightListBox;
         private System.Windows.Forms.Button button_openRight;
         private System.Windows.Forms.Button button_saveRight;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
     }
 }
 
