@@ -145,7 +145,7 @@
             // 
             // pictureImage
             // 
-            this.pictureImage.BackColor = System.Drawing.Color.Transparent;
+            this.pictureImage.BackColor = System.Drawing.Color.Black;
             this.pictureImage.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureImage.Location = new System.Drawing.Point(0, 0);
             this.pictureImage.Name = "pictureImage";

@@ -24,7 +24,7 @@ namespace SURF
         #region Описание используемых данных
 
         //Координаты вырезаемой области снимков
-        Rectangle rect = new Rectangle(237, 105, 1920, 1615);
+        Rectangle rect = new Rectangle(65, 0, 1920, 1530);
 
         //Комплект снимков левого глаза
         List<Bitmap> eyeImages_left = new List<Bitmap>();                           //Исходники
@@ -143,11 +143,11 @@ namespace SURF
 
             //Очистка списка ключевых точек
             iPoints_left.Clear();
-            for (Int32 i = 0; i < 7; i++)
+            for (Int32 i = 0; i < 9; i++)
                 iPoints_left.Add(null);
 
-
-            Parallel.For(0, 7, i =>
+            //Параллельно выполняем поиск ключевых точек для всех снимков
+            Parallel.For(0, 9, i =>
             {
                 try
                 {
@@ -193,10 +193,11 @@ namespace SURF
 
             //Очистка списка ключевых точек
             iPoints_right.Clear();
-            for (Int32 i = 0; i < 7; i++)
+            for (Int32 i = 0; i < 9; i++)
                 iPoints_right.Add(null);
 
-            Parallel.For(0, 7, i =>
+            //
+            Parallel.For(0, 9, i =>
             {
                 try
                 {
@@ -245,16 +246,18 @@ namespace SURF
             //Double x1 = 850, y1 = 750;
 
             //Расставляем снимки по схеме
-            x.Add(1050); y.Add(1150);
-            x.Add(2000); y.Add(1150);
-            x.Add(2850); y.Add(1150);
-            x.Add(2000); y.Add(400);
-            x.Add(2000); y.Add(1900);
-            x.Add(250);  y.Add(400);
-            x.Add(200);  y.Add(1900);
+            x.Add(1050); y.Add(1150); //1
+            x.Add(1050); y.Add(600);  //2
+            x.Add(550);  y.Add(700);  //3
+            x.Add(450);  y.Add(1150); //4
+            x.Add(550);  y.Add(1600); //5
+            x.Add(1050); y.Add(1700); //6
+            x.Add(1550); y.Add(1600); //7
+            x.Add(1650); y.Add(1150); //8
+            x.Add(1550); y.Add(700);  //9
 
             Int32 check = 0;
-
+            
             //Сомещаем, если есть общие ключевые точки
             //-Для первых трех снимков
             for (Int32 i = 0; i < 3; i++)
@@ -304,8 +307,8 @@ namespace SURF
                     check++;
                 }
             }
-
-            MessageBox.Show((7 - check).ToString() + " снимков из 7 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+            MessageBox.Show((9 - check).ToString() + " снимков из 9 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
             
             Bitmap img = new Bitmap(5000, 4000);
 
@@ -317,9 +320,13 @@ namespace SURF
             Region fill = new Region(rect);
             g.FillRegion(blck, fill);
 
-            
-            for(Int32 i = x.Count-1; i >= 0; i--)
-                g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
+
+            for (Int32 i = x.Count - 1; i >= 0; i--)
+                if (i == 8 || i == 6 || i == 4 || i == 2) g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
+
+            for (Int32 i = x.Count-1; i >= 0; i--)
+                if(i == 7 || i == 5 || i== 3 || i == 1 || i == 0) g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
+
             /*
             for (Int32 i = 0; i < 2; i++)
                 g.DrawImage(eyeImages_left[i], new Point(x[i], y[i]));
@@ -491,9 +498,9 @@ namespace SURF
             //Диалог открытия файлов
             if (open_images.ShowDialog() == DialogResult.OK)
             {
-                if (open_images.FileNames.Count() != 7)
+                if (open_images.FileNames.Count() != 9)
                 {
-                    MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Должны быть выбраны 9 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -504,7 +511,7 @@ namespace SURF
                 //Курсор ожидания
                 this.Cursor = Cursors.WaitCursor;
 
-                for (Int32 i = 0; i < 7; i++)
+                for (Int32 i = 0; i < 9; i++)
                 {
                     string imgPath = open_images.FileNames[i];
                     try
@@ -638,6 +645,7 @@ namespace SURF
         #endregion
 
         #region Обработка изображений
+
 
         /// <summary>
         /// Удаление фона и артефактов вокруг снимка
@@ -1243,6 +1251,7 @@ namespace SURF
             */
 
             if (save_image.ShowDialog() == DialogResult.OK)
+                //MessageBox.Show(save_image.FileName);
                 eyeImages_left.Last().Save(save_image.FileName, ImageFormat.Jpeg);
         }
 
