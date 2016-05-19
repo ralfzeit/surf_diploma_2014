@@ -349,13 +349,15 @@ namespace SURF
             //Double x1 = 850, y1 = 750;
 
             //Расставляем снимки по схеме
-            x.Add(1900); y.Add(1500);
-            x.Add(1500); y.Add(1500);
-            x.Add(500); y.Add(1350);
-            x.Add(400); y.Add(450);
-            x.Add(900); y.Add(2350);
-            x.Add(2250); y.Add(150);
-            x.Add(2850); y.Add(2650);
+            x.Add(1050); y.Add(1150); //1
+            x.Add(1050); y.Add(600);  //2
+            x.Add(550);  y.Add(700);  //3
+            x.Add(450);  y.Add(1150); //4
+            x.Add(550);  y.Add(1600); //5
+            x.Add(1050); y.Add(1700); //6
+            x.Add(1550); y.Add(1600); //7
+            x.Add(1650); y.Add(1150); //8
+            x.Add(1550); y.Add(700);  //9
 
             Int32 check = 0;
 
@@ -409,7 +411,7 @@ namespace SURF
                 }
             }
 
-            MessageBox.Show((7-check).ToString() + " снимков из 7 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show((9-check).ToString() + " снимков из 9 будут расположены по предустановленным координатам", "Информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
             Bitmap img = new Bitmap(5000, 4500);
@@ -426,9 +428,13 @@ namespace SURF
             for (Int32 i = x.Count - 1; i >= 0; i--)
                 g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
             */
-            for (Int32 i = 0; i < x.Count; i++)
-                g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
-            
+
+            for (Int32 i = x.Count - 1; i >= 0; i--)
+                if (i == 8 || i == 6 || i == 4 || i == 2) g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
+
+            for (Int32 i = x.Count - 1; i >= 0; i--)
+                if (i == 7 || i == 5 || i == 3 || i == 1 || i == 0) g.DrawImage(eyeImages_right[i], new Point(x[i], y[i]));
+
             pictureImage.Image = img;
 
             eyeImages_right.Add(img);
@@ -582,9 +588,9 @@ namespace SURF
             //Диалог открытия файлов
             if (open_images.ShowDialog() == DialogResult.OK)
             {
-                if (open_images.FileNames.Count() != 7)
+                if (open_images.FileNames.Count() != 9)
                 {
-                    MessageBox.Show("Должны быть выбраны 7 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Должны быть выбраны 9 снимков", "Ошибка загрузки изображений", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -595,7 +601,7 @@ namespace SURF
                 //Курсор ожидания
                 this.Cursor = Cursors.WaitCursor;
 
-                for (Int32 i = 0; i < 7; i++)
+                for (Int32 i = 0; i < 9; i++)
                 {
                     string imgPath = open_images.FileNames[i];
                     try
